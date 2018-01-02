@@ -22,17 +22,23 @@ class Deck
       if (shouldShuffle)
          Collections.shuffle(theCards);
    }
-   
    //deal
-   Card dealCard()
+   public Card dealCard()
    {
-      return theCards.pop();
+      if (theCards.size() > 0)
+         return theCards.pop();
+      return null;
    }
    //prob not necessary
    void returnCard(Card card)
    {
       if (card != null)
          theCards.push(card);
+
+   }
+   public int size()
+   {
+      return this.theCards.size();
    }
    //inspects card of deck position provided by user
    Card inspectCard(int k)
