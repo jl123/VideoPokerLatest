@@ -4,6 +4,8 @@ import java.util.stream.Collectors;
 public class HandEvaluator
 {
    public static final int MAX_BET = 5;
+
+   public static LinkedList<Card> sortedHand;
    
    //ODDS
    public static final int royalFlushMaxWin = 800;
@@ -40,8 +42,7 @@ public class HandEvaluator
    }
 
    //handVal myVal;
-   
-   private static LinkedList<Card> sortedHand;
+
 
    public static int betReturn(handVal val, int bet)
    {
@@ -255,7 +256,7 @@ public class HandEvaluator
       ListIterator<Card> iter;
       for (iter = cardList.listIterator(); iter.hasNext(); )
       {
-         if (card.compareTo(iter.next()) == 0)
+         if (card.compareTo(iter.next()) == 0 )
          {
             iter.remove();
             return true;   // we found, we removed, we return

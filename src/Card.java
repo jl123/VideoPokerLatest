@@ -5,7 +5,7 @@ class Card implements Comparable<Card>
 
    
    // static class constants (for suits)
-   static enum Suit { clubs, diamonds, hearts, spades };
+   static enum Suit { clubs , diamonds, hearts, spades };
    
    static enum Rank 
    {
@@ -53,7 +53,8 @@ class Card implements Comparable<Card>
    @Override
    public int compareTo(Card other) 
    {
-      
-      return this.rank.getValue() - other.rank.getValue(); 
+      if (this.getRank() == other.getRank())
+         return this.suit.ordinal() - other.suit.ordinal();
+      return this.rank.value - other.rank.value;
    }
 }

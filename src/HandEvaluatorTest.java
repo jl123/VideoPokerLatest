@@ -1,9 +1,37 @@
 import org.junit.Test;
 
+import java.util.LinkedList;
+
 import static org.junit.Assert.*;
 
 public class HandEvaluatorTest
 {
+   @Test
+   public void removeTest()
+   {
+      Hand hand = new Hand();
+      Card testCards[] = new Card[5];
+      LinkedList<Card> sortedHand = new LinkedList<>();
+
+      int cardDel = 3;
+
+      testCards[0] = new Card(Card.Rank.ten, Card.Suit.spades);
+      testCards[1] = new Card(Card.Rank.ten, Card.Suit.hearts);
+      testCards[2] = new Card(Card.Rank.ten, Card.Suit.clubs);
+      testCards[3] = new Card(Card.Rank.ten, Card.Suit.diamonds);
+      testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
+      placeCards(hand, testCards);
+      System.out.println(hand.toString());
+
+      for (int k = 0; k < testCards.length; k++)
+      {
+         HandEvaluator.insert(sortedHand, testCards[k]);
+      }
+      System.out.println(sortedHand.toString());
+      HandEvaluator.remove(sortedHand, testCards[cardDel]);
+      System.out.println(sortedHand.toString());
+
+   }
 
    @Test
    public void royalFlushTest()
@@ -17,6 +45,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
+      System.out.println(hand.toString());
       assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.royalFlush);
    }
 
