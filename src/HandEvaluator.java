@@ -18,16 +18,53 @@ public class HandEvaluator
    public static final int pairWin = 1;
    
    private static int winnings;
-   public enum handVal{ royalFlush, straightFlush, quads, fullHouse,
-      flush, straight, set, twoPair, pair, loser };
+   public enum handVal{
+      royalFlush, straightFlush, quads, fullHouse,
+            flush, straight, set, twoPair, pair, loser;
 
-   handVal myVal;
+      @Override
+      public String toString()
+      {
+         switch (this)
+         {
+            case royalFlush:
+               return "ROYAL FLUSH";
+            case straightFlush:
+               return "STRAIGHT FLUSH";
+            case twoPair:
+               return "TWO PAIR";
+            default:
+               return "LOSER";
+         }
+      }
+   }
+
+   //handVal myVal;
    
-   static LinkedList<Card> sortedHand = new LinkedList<Card>();
-  
+   private static LinkedList<Card> sortedHand;
+
+   public static int betReturn(handVal val, int bet)
+   {
+      switch(val)
+      {
+         case royalFlush:
+            if (bet == MAX_BET)
+            {
+               return royalFlushMaxWin * bet;
+            }
+            else
+            {
+               return royalFlushWin * bet;
+            }
+         default: return 0;
+
+      }
+   }
+
    public static handVal getHandVal(Hand hand)
    {
-      sortedHand.clear();
+      sortedHand = new LinkedList<Card>();
+      //sortedHand.clear();
       sortHand(hand);
 
       if ( isRoyalFlush(sortedHand) )

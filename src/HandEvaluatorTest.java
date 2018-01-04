@@ -17,7 +17,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.royalFlush);
    }
 
    @Test
@@ -32,7 +32,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.nine, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.straightFlush);
    }
 
    @Test
@@ -47,7 +47,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.ten, Card.Suit.diamonds);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.quads);
    }
 
    @Test
@@ -62,7 +62,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.two, Card.Suit.diamonds);
       testCards[4] = new Card(Card.Rank.two, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.fullHouse);
    }
 
    @Test
@@ -77,7 +77,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.two, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.flush);
    }
 
    @Test
@@ -92,7 +92,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.three, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.two, Card.Suit.diamonds);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.straight);
    }
 
    @Test
@@ -107,7 +107,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.eight, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.six, Card.Suit.diamonds);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.straight);
    }
 
    @Test
@@ -122,7 +122,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.eight, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.six, Card.Suit.diamonds);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.set);
    }
 
    @Test
@@ -137,7 +137,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.eight, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.seven, Card.Suit.diamonds);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.twoPair);
    }
 
    @Test
@@ -152,7 +152,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.loser);
    }
 
    @Test
@@ -161,14 +161,15 @@ public class HandEvaluatorTest
       Hand hand = new Hand();
       Card testCards[] = new Card[5];
 
-      testCards[0] = new Card(Card.Rank.king, Card.Suit.diamonds);
+      testCards[0] = new Card(Card.Rank.jack, Card.Suit.diamonds);
       testCards[1] = new Card(Card.Rank.king, Card.Suit.spades);
       testCards[2] = new Card(Card.Rank.jack, Card.Suit.spades);
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println( HandEvaluator.getHandVal(hand) );
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.pair);
    }
+
 
    public void placeCards(Hand hand, Card[] cards)
    {

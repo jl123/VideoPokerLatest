@@ -20,20 +20,18 @@ public class VideoPoker
       System.out.println("HAND VALUE: " + HandEvaluator.getHandVal(playerHand));
 
       System.out.println(playerHand.toString());
-      String muckCard = "0";
+      String muckCard = "";
       int muckInt;
       do
       {
          try
          {
          muckCard = gameScanner.nextLine();
-         if (muckCard.equals("6"))
-            muckInt = Integer.parseInt(muckCard);
-         else muckInt = Integer.parseInt(muckCard);
+         muckInt = Integer.parseInt(muckCard);
          muckInt--;
-         if (muckInt >= 0 && muckInt < Hand.MAX_CARDS )
+         if ( ( muckInt >= 0 && muckInt < Hand.MAX_CARDS  ) )
             playerHand.switchCard[muckInt] = true;
-         else if (muckCard.equals("6"))
+         else if ( muckCard != "" )
             throw new NoCardException();
          }
          catch (NumberFormatException|NoCardException ex)
@@ -41,7 +39,7 @@ public class VideoPoker
             System.out.println("Enter a card value between 1 and 5 to muck that "
                   + "card or 6 to stand");
          }
-      }while (!muckCard.equals("6"));
+      }while (!muckCard.equals(""));
       
       playerHand.draw(theDeck);
 
