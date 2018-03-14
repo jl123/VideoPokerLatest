@@ -19,10 +19,115 @@ public class HandEvaluator
    public static final int twoPairWin = 2;
    public static final int pairWin = 1;
    
-   private static int winnings;
+
+
+   public static void oddsTable()
+   {
+      System.out.println(
+            "Pay out table:\n" +
+            "Bet:               1     2     3      4      5   \n" +
+            "                 ------------------------------- \n" +
+            "Royal flush.....| 250 | 500 | 750 | 1000 | 4000 |\n" +
+            "Straight Flush..| 50  | 100 | 150 | 200  | 250  |\n" +
+            "4 of a kind.....| 25  | 50  | 75  | 100  | 125  |\n" +
+            "Full house......| 9   | 18  | 27  | 36   | 45   |\n" +
+            "Flush...........| 6   | 12  | 18  | 24   | 30   |\n" +
+            "Straight........| 4   | 8   | 12  | 16   | 20   |\n" +
+            "3 of a kind.....| 3   | 6   | 9   | 12   | 15   |\n" +
+            "2 pair..........| 2   | 4   | 6   | 8    | 10   |\n" +
+            "Jacks or better.| 1   | 2   | 3   | 4    | 5    |\n" +
+            "                 ------------------------------- "
+
+
+      );
+   }
+
    public enum handVal{
-      royalFlush, straightFlush, quads, fullHouse,
-            flush, straight, set, twoPair, pair, loser;
+      royalFlush
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  if (betAmount == MAX_BET)
+                     return MAX_BET * royalFlushMaxWin;
+                  else
+                     return betAmount * royalFlushWin;
+               }
+            },
+      straightFlush
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * straightFlushWin;
+               }
+            },
+      quads
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * quadsWin;
+               }
+            },
+      fullHouse
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * fullHouseWin;
+               }
+            },
+      flush
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * flushWin;
+               }
+            },
+      straight
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * straightWin;
+               }
+            },
+      set
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * setWin;
+               }
+            },
+      twoPair
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * twoPairWin;
+               }
+            },
+      highPair
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return betAmount * pairWin;
+               }
+            },
+      loser
+            {
+               @Override
+               public int winVal(int betAmount)
+               {
+                  return 0;
+               }
+            };
+
+      public abstract int winVal(int betAmount);
 
       @Override
       public String toString()
@@ -33,34 +138,22 @@ public class HandEvaluator
                return "ROYAL FLUSH";
             case straightFlush:
                return "STRAIGHT FLUSH";
+            case quads:
+               return "4 OF A KIND";
+            case fullHouse:
+               return "FULL HOUSE";
+            case set:
+               return "3 OF A KIND";
             case twoPair:
                return "TWO PAIR";
+            case highPair:
+               return "HIGH PAIR";
             default:
                return "LOSER";
          }
       }
    }
 
-   //handVal myVal;
-
-
-   public static int betReturn(handVal val, int bet)
-   {
-      switch(val)
-      {
-         case royalFlush:
-            if (bet == MAX_BET)
-            {
-               return royalFlushMaxWin * bet;
-            }
-            else
-            {
-               return royalFlushWin * bet;
-            }
-         default: return 0;
-
-      }
-   }
 
    public static handVal getHandVal(Hand hand)
    {
@@ -85,7 +178,9 @@ public class HandEvaluator
       if (isTwoPair( sortedHand ) )
          return handVal.twoPair;
       if (isPairJorHigher( sortedHand ) )
-         return handVal.pair;
+         return handVal.highPair;
+      if (isPair( sortedHand ))
+         return handVal.loser;
       return handVal.loser;
       
    }

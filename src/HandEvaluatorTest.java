@@ -21,16 +21,12 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.ten, Card.Suit.diamonds);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      System.out.println(hand.toString());
 
       for (int k = 0; k < testCards.length; k++)
       {
          HandEvaluator.insert(sortedHand, testCards[k]);
       }
-      System.out.println(sortedHand.toString());
-      HandEvaluator.remove(sortedHand, testCards[cardDel]);
-      System.out.println(sortedHand.toString());
-
+      assertEquals(true, HandEvaluator.remove(sortedHand, testCards[cardDel]));
    }
 
    @Test
@@ -196,7 +192,7 @@ public class HandEvaluatorTest
       testCards[3] = new Card(Card.Rank.queen, Card.Suit.spades);
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
-      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.pair);
+      assertEquals(HandEvaluator.getHandVal(hand), HandEvaluator.handVal.highPair);
    }
 
 
