@@ -6,8 +6,8 @@ public class VideoPoker
    {
       final boolean shuffle = false;
       Deck theDeck;
-      String bet;
-      int betInt = 0;
+      String bet = "";
+      int betInt = 5;
       int credits = 1000;
       int gameNum = 0;
       Scanner gameScanner = new Scanner(System.in);
@@ -16,37 +16,36 @@ public class VideoPoker
 
       System.out.println("Welcome to Video Poker. Enjoy!\n\n");
       HandEvaluator.oddsTable();
-      OUTTER:
+
       while( true )
       {
          gameNum++;
          theDeck = new Deck(shuffle);
+         playerHand = new Hand();
          System.out.println("GAME NUMBER: " + gameNum);
          System.out.println("YOUR CREDITS: " + credits);
+         System.out.println("CURRENT BET: " + betInt);
 
-
-
-         playerHand = new Hand();
          do
          {
+            System.out.println("\nHit ENTER to continue with current bet amount, or enter amount (1-5) to change bet amount, or 'X' to exit, then press ENTER to play:");
             try
             {
-
-                     System.out.println("\n Enter bet amount (1-5) or 'X' to exit:");
                      bet = gameScanner.nextLine();
-                     if ( bet.equals("X") || bet.equals("x") )
-                        break OUTTER;
-                     betInt = Integer.parseInt(bet);
+                     if ( bet.equals("X") || bet.equals("x"))
+                        System.exit(0);
+                     else if(bet.isEmpty())
+                        break;
+                     else
+                        betInt = Integer.parseInt(bet);
 
             } catch (NumberFormatException e)
             {
-               System.out.println("Enter a card value between 1 and 5 to muck that "
-                     + "card or 6 to stand");
+               System.out.println("Enter a card value between 1 and 5, then press ENTER to mark it for redraw. "
+                     + "Press ENTER again when ready to draw.");
             }
-         } while (betInt < 1 || betInt > 5 );
-
+         } while (betInt < 1 || betInt > 5);
          credits = credits - betInt;
-
          for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
             playerHand.takeCard(theDeck.dealCard());
@@ -64,12 +63,24 @@ public class VideoPoker
          {
             try
             {
+               System.out.println("Choose a card to discard (1-5) and hit ENTER. HIT ENTER WITH NO NUMBER TO DRAW CARDS.");
                muckCard = gameScanner.nextLine();
                if (!muckCard.isEmpty())
                   muckInt = Integer.parseInt(muckCard);
                muckInt--;
                if ((muckInt >= 0 && muckInt < Hand.MAX_CARDS) && !muckCard.isEmpty())
-                  playerHand.switchCard[muckInt] = true;
+               {
+                  if (playerHand.switchCard[muckInt] == true)
+                  {
+                     playerHand.switchCard[muckInt] = false;
+                  }
+                  else
+                     playerHand.switchCard[muckInt] = true;
+                  for (int k = 0; k < Hand.MAX_CARDS; k++)
+                  System.out.println("Card " + (k + 1) + ": "
+                        + playerHand.inspectCard(k).toString() + "   DISCARD: "
+                        + playerHand.switchCard[k]);
+               }
                else if (!muckCard.isEmpty())
                {
                   throw new NoCardException();
