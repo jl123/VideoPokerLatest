@@ -4,7 +4,7 @@ public class VideoPoker
 {
    public static void main (String[] args)
    {
-      final boolean shuffle = false;
+      final boolean shuffle = true;
       Deck theDeck;
       String bet = "";
       int betInt = 5;
