@@ -16,22 +16,26 @@ public class VPGui extends Application {
       Deck deck = new Deck(true);
       Hand playerHand = new Hand();
       ImageView cardImages[] = new ImageView[Hand.MAX_CARDS];
+      Button btn[] = new Button[Hand.MAX_CARDS];
+      Image image;
+      GridPane root = new GridPane();
 
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
          playerHand.takeCard(deck.dealCard());
 
-      }
-      Button btn[] = new Button[Hand.MAX_CARDS];
-      Image image;
-      for (int k = 0; k < Hand.MAX_CARDS; k++)
-      {
          image = new Image(CardImageUtils.getImage(playerHand.inspectCard(k)));
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
-         btn[k] = new Button("  HOLD  ");
+
+         btn[k] = new Button();
+         btn[k].setGraphic(new ImageView(image));
          btn[k].setOnAction(new JoesEventHandler(playerHand, k));
+
+         root.add(btn[k], k, 0);
+         //root.add(cardImages[k], k, 1);
       }
+
       Button butt = new Button("DRAW");
       butt.setOnAction(new EventHandler<ActionEvent>()
       {
@@ -41,13 +45,7 @@ public class VPGui extends Application {
             System.out.println("AAAAA");
          }
       });
-      GridPane root = new GridPane();
-      for (int j = 0; j < Hand.MAX_CARDS; j++)
-      {
-         root.add(btn[j], j, 0);
-         root.add(cardImages[j], j, 1);
-         //root.getChildren().add(btn[j]);
-      }
+
       root.add(butt,0,2);
       Scene scene = new Scene(root, 900, 1000);
 
@@ -69,11 +67,11 @@ public class VPGui extends Application {
          cardNum = i;
          this.playerHand = playerHand;
       }
+
       @Override
       public void handle(ActionEvent event)
       {
          boolean currentValue = playerHand.switchCard[cardNum];
-
          playerHand.switchCard[cardNum] = !currentValue;
       }
    }
