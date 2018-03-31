@@ -15,7 +15,7 @@ public class VideoPoker
       Hand playerHand;
 
       System.out.println("Welcome to Video Poker. Enjoy!\n\n");
-      HandEvaluator.oddsTable();
+      System.out.println(HandEvaluator.oddsTable());
 
       while( true )
       {

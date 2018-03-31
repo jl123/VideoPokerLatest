@@ -63,7 +63,7 @@ class Hand
       sortedHand = new LinkedList<Card>();
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         switchCard[k] = false;
+         switchCard[k] = true;
       }
       resetHand();
    }

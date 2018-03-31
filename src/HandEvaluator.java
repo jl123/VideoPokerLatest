@@ -21,10 +21,11 @@ public class HandEvaluator
    
 
 
-   public static void oddsTable()
+   public static String oddsTable()
    {
-      System.out.println(
-            "Pay out table:\n" +
+
+            return
+                  "Pay out table:\n" +
             "Bet:               1     2     3      4      5   \n" +
             "                 ------------------------------- \n" +
             "Royal flush.....| 250 | 500 | 750 | 1000 | 4000 |\n" +
@@ -36,10 +37,9 @@ public class HandEvaluator
             "3 of a kind.....| 3   | 6   | 9   | 12   | 15   |\n" +
             "2 pair..........| 2   | 4   | 6   | 8    | 10   |\n" +
             "Jacks or better.| 1   | 2   | 3   | 4    | 5    |\n" +
-            "                 ------------------------------- "
+            "                 ------------------------------- ";
 
 
-      );
    }
 
    public enum handVal{
