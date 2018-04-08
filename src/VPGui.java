@@ -21,8 +21,7 @@ import javax.swing.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VPGui extends Application {
-   static int betInt = 5;
-   static int credits = 1000;
+
 
    @Override
    public void start(Stage primaryStage) {
@@ -35,14 +34,16 @@ public class VPGui extends Application {
       StackPane root = new StackPane();
       GridPane grid = new GridPane();
       Image image;
+      Hand startHand = new Hand();
+      Deck startDeck = new Deck(false);
 
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
       System.out.println("game credts" + game.getCredits());
+
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         game.newHand();
-
-         image = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+         startHand.takeCard(startDeck.dealCard());
+         image = new Image(CardImageUtils.getImage(startHand.inspectCard(k)));
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
 
