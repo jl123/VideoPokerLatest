@@ -9,27 +9,33 @@ import javafx.scene.layout.GridPane;
 
 public class GuiGame
 {
+   final boolean shouldShuffle = true;
+
    private int bet;
    private int credits;
    Deck deck;
    Hand playerHand;
+   enum stage{ predeal, dealt, drawn
+
+   }
 
    public GuiGame()
    {
       bet = 5;
       credits = 1000;
+      playerHand = new Hand();
    }
 
    public Hand newHand()
    {
-      deck = new Deck(true);
-      playerHand = new Hand();
+      deck = new Deck(shouldShuffle);
+      playerHand.resetHand();
+      credits -= bet;
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         playerHand.switchCard[k] = false;
+         playerHand.switchCard[k] = true;
          playerHand.takeCard(deck.dealCard());
       }
-      credits -= bet;
       return playerHand;
    }
 
@@ -37,6 +43,7 @@ public class GuiGame
    {
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
+         System.out.println("Switch? " + playerHand.switchCard[k]);
          if (playerHand.switchCard[k])
             playerHand.replaceCard(k, deck.dealCard());
       }
@@ -45,8 +52,8 @@ public class GuiGame
 
    public int evaluateHand()
    {
-      int creditsWon = HandEvaluator.amountWon(playerHand.sortedHand, bet);
-      credits += creditsWon;
+      int creditsWon = HandEvaluator.getHandVal(playerHand).winVal(bet);
+      credits += HandEvaluator.getHandVal(playerHand).winVal(bet);
       return creditsWon;
    }
 
