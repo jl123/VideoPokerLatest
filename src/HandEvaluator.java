@@ -3,6 +3,7 @@ import java.util.stream.Collectors;
 
 public class HandEvaluator
 {
+   public static final int MIN_BET = 1;
    public static final int MAX_BET = 5;
 
    public static LinkedList<Card> sortedHand;

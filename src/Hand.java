@@ -8,7 +8,7 @@ class Hand
 {
    public static int MAX_CARDS = 5;
    private Card[] hand;
-   public static LinkedList sortedHand;
+   public LinkedList sortedHand;
 
    boolean[] switchCard = new boolean[Hand.MAX_CARDS];
    private int numCards = 0;

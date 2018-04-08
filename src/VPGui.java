@@ -4,6 +4,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
+import javax.swing.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VPGui extends Application {
@@ -24,32 +26,32 @@ public class VPGui extends Application {
 
    @Override
    public void start(Stage primaryStage) {
+      GuiGame game = new GuiGame();
       Deck deck = new Deck(true);
-      Hand playerHand = new Hand();
       ImageView cardImages[] = new ImageView[Hand.MAX_CARDS];
       Button cardButton[] = new Button[Hand.MAX_CARDS];
       Button credits[] = new Button[5];
-
-      Image image;
       StackPane root = new StackPane();
       GridPane grid = new GridPane();
-      Text oddsTable = new Text(HandEvaluator.oddsTable());
+      Image image;
+      boolean gameStart;
       Label[] holdDrawLabel = new Label[Hand.MAX_CARDS];
 
-      root.getChildren().add(oddsTable);
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         playerHand.takeCard(deck.dealCard());
+         game.newHand();
 
-         image = new Image(CardImageUtils.getImage(playerHand.inspectCard(k)));
+         image = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
 
+
          holdDrawLabel[k] = new Label();
-         //System.out.println(holdDrawLabel[k].toString());
          cardButton[k] = new Button();
          cardButton[k].setGraphic(new ImageView(image));
-         cardButton[k].setOnAction(new JoesEventHandler(playerHand, holdDrawLabel, k));
+         cardButton[k].setOnAction(new JoesEventHandler(game.playerHand, holdDrawLabel, k));
+
+         Button play = new Button("PLAY");
 
          //CREDITS BUTTONS
          int credit = k + 1;
@@ -59,41 +61,79 @@ public class VPGui extends Application {
          grid.add(credits[k], k, 2);
          credits[k].setOnAction(new CreditEventsHandler(k+1));
       }
-      root.getChildren().add(grid);
       Button play = new Button("PLAY");
-      grid.add(play, 5, 2);
       Button draw = new Button("DRAW");
+      //grid.add(draw, 0, 6);
       draw.setOnAction(new EventHandler<ActionEvent>()
       {
          @Override
          public void handle(ActionEvent event)
          {
             Image image;
-            playerHand.draw(deck);
-            System.out.println(playerHand.toString());
+            System.out.println(game.playerHand.toString());
+            game.draw();
+            System.out.println(game.playerHand.toString());
+
+            grid.add(play, 5, 2);
             for (int k = 0; k < Hand.MAX_CARDS; k++)
             {
-               image = new Image(CardImageUtils.getImage(playerHand.inspectCard(k)));
-               //cardImages[k] = new ImageView();
+
+               game.playerHand.switchCard[k] = false;
+               holdDrawLabel[k].setText("      ");
+               grid.add(credits[k], k, 2);
+               image = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+               cardImages[k] = new ImageView();
                cardImages[k].setImage(image);
                //btn[k] = new Button();
                cardButton[k].setGraphic(new ImageView(image));
-               System.out.println(image.toString());
+               System.out.println(game.playerHand.toString());
                grid.getChildren().remove(draw);
+               System.out.println(HandEvaluator.getHandVal(game.playerHand));
             }
 
          }
       });
 
-      grid.add(draw,0,3);
-      Scene scene = new Scene(root, 900, 1000);
+      Text oddsTable = new Text(HandEvaluator.oddsTable());
+      root.getChildren().add(oddsTable);
 
+      //GuiGame.newGame(grid);
+
+      root.getChildren().add(grid);
+
+      play.setOnAction(new EventHandler<ActionEvent>()
+      {
+         @Override
+         public void handle(ActionEvent event)
+         {
+            game.newHand();
+            grid.add(draw, 0, 6);
+            grid.getChildren().remove(play);
+            for (int k = 0; k < Hand.MAX_CARDS; k++)
+            {
+               grid.getChildren().remove(credits[k]);
+               Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+               cardImages[k] = new ImageView();
+               cardImages[k].setImage(img);
+               //btn[k] = new Button();
+               cardButton[k].setGraphic(new ImageView(img));
+               //System.out.println(img.toSring());
+               //grid.getChildren().remove(draw);
+               //System.out.println(HandEvaluator.getHandVal(game.playerHand));
+            }
+
+         }
+      });
+      grid.add(play, 5, 2);
+      Scene scene = new Scene(root, 900, 1000);
       primaryStage.setTitle("Video Poker!");
       primaryStage.setScene(scene);
       primaryStage.show();
 
    }
-   public static void main(String[] args) {
+
+   public static void main(String[] args)
+   {
       launch(args);
    }
 
@@ -113,6 +153,7 @@ public class VPGui extends Application {
       }
 
    }
+
    private static class JoesEventHandler implements EventHandler<ActionEvent>
    {
       int cardNum;
@@ -131,13 +172,12 @@ public class VPGui extends Application {
       @Override
       public void handle(ActionEvent event)
       {
-         System.out.println("old val: " + playerHand.switchCard[cardNum]);
-         boolean currentValue = playerHand.switchCard[cardNum];
+         System.out.println("old val: " + this.playerHand.switchCard[cardNum]);
+         boolean currentValue = this.playerHand.switchCard[cardNum];
          playerHand.switchCard[cardNum] = !currentValue;
-         System.out.println("new val: " + playerHand.switchCard[cardNum]);
+         System.out.println("new val: " + this.playerHand.switchCard[cardNum]);
          if (!playerHand.switchCard[cardNum])
          {
-
             holdDrawLabel[cardNum].setText("    HOLD     ");
          }
          else
@@ -146,5 +186,4 @@ public class VPGui extends Application {
          }
       }
    }
-
 }
