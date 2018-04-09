@@ -74,6 +74,7 @@ public class VPGui extends Application {
       draw.setOnAction(event ->
       {
          Image image1;
+         int amountWon;
          game.draw();
          grid.add(play, 5, 2);
          for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -89,12 +90,12 @@ public class VPGui extends Application {
             cardButton[k].setGraphic(new ImageView(image1));
          }
          grid.getChildren().remove(draw);
-         game.evaluateHand();
-         creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
-         if (game.evaluateHand() > 0)
+         amountWon = game.evaluateHand();
+         if (amountWon > 0)
          {
-            amountWonLabel.setText("AMOUNT WON: " + game.evaluateHand());
+            amountWonLabel.setText("AMOUNT WON: " + amountWon);
          }
+         creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
          System.out.println("CREDITS: " + game.getCredits());
       });
 

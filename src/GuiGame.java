@@ -54,6 +54,7 @@ public class GuiGame
    public int evaluateHand()
    {
       int creditsWon = HandEvaluator.getHandVal(playerHand).winVal(bet);
+      System.out.println("WON: " + String.valueOf(creditsWon));
       credits += HandEvaluator.getHandVal(playerHand).winVal(bet);
       return creditsWon;
    }
