@@ -13,21 +13,22 @@ public class GuiGame
 
    private int bet;
    private int credits;
-   Deck deck;
+   private Deck deck;
    Hand playerHand;
-   enum stage{ predeal, dealt, drawn
+   private boolean dealt;
 
-   }
 
    public GuiGame()
    {
       bet = 5;
       credits = 1000;
       playerHand = new Hand();
+      dealt = false;
    }
 
    public Hand newHand()
    {
+      dealt = true;
       deck = new Deck(shouldShuffle);
       playerHand.resetHand();
       credits -= bet;
@@ -41,9 +42,9 @@ public class GuiGame
 
    public Hand draw()
    {
+      dealt = false;
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         System.out.println("Switch? " + playerHand.switchCard[k]);
          if (playerHand.switchCard[k])
             playerHand.replaceCard(k, deck.dealCard());
       }
@@ -69,5 +70,11 @@ public class GuiGame
          return true;
       }
       return false;
+   }
+
+
+   public boolean getDealt()
+   {
+      return dealt;
    }
 }

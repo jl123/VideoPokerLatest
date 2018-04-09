@@ -33,9 +33,12 @@ public class VPGui extends Application {
       Button credits[] = new Button[5];
       StackPane root = new StackPane();
       GridPane grid = new GridPane();
+      grid.setHgap(15);
+      grid.setVgap(15);
       Image image;
       Hand startHand = new Hand();
       Deck startDeck = new Deck(false);
+      Label creditsLabel = new Label ("CREDITS " + String.valueOf(game.getCredits()));
 
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
       System.out.println("game credts" + game.getCredits());
@@ -65,16 +68,16 @@ public class VPGui extends Application {
       }
       Button play = new Button("PLAY");
       Button draw = new Button("DRAW");
-      //grid.add(draw, 0, 6);
+      grid.add(creditsLabel, 0, 9);
       draw.setOnAction(new EventHandler<ActionEvent>()
       {
          @Override
          public void handle(ActionEvent event)
          {
             Image image;
-            System.out.println(game.playerHand.toString());
+            //System.out.println(game.playerHand.toString());
             game.draw();
-            System.out.println(game.playerHand.toString());
+            //System.out.println(game.playerHand.toString());
 
             grid.add(play, 5, 2);
             for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -91,7 +94,8 @@ public class VPGui extends Application {
             }
             grid.getChildren().remove(draw);
             game.evaluateHand();
-            System.out.println(game.getCredits());
+            creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
+            System.out.println("CREDITS: " + game.getCredits());
          }
       });
 
@@ -108,6 +112,7 @@ public class VPGui extends Application {
          public void handle(ActionEvent event)
          {
             game.newHand();
+            creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
             grid.add(draw, 0, 6);
             grid.getChildren().remove(play);
             for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -162,12 +167,14 @@ public class VPGui extends Application {
       int cardNum;
       Hand playerHand;
       Label holdDrawLabel[];
+      GuiGame game;
       //StringProperty labelProperties[];
       JoesEventHandler(GuiGame game, Label holdDrawLabel[], int cardNum)
       {
          this.cardNum = cardNum;
          this.playerHand = game.playerHand;
          this.holdDrawLabel = holdDrawLabel;
+         this.game = game;
 
 
       }
@@ -175,9 +182,8 @@ public class VPGui extends Application {
       @Override
       public void handle(ActionEvent event)
       {
-         System.out.println("old val: " + playerHand.switchCard[cardNum]);
          playerHand.switchCard[cardNum] = !playerHand.switchCard[cardNum];
-         if (!playerHand.switchCard[cardNum])
+         if (!playerHand.switchCard[cardNum] && game.getDealt())
          {
             holdDrawLabel[cardNum].setText("    HOLD     ");
          }
