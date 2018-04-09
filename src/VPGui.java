@@ -39,6 +39,7 @@ public class VPGui extends Application {
       Hand startHand = new Hand();
       Deck startDeck = new Deck(false);
       Label creditsLabel = new Label ("CREDITS " + String.valueOf(game.getCredits()));
+      Label amountWonLabel = new Label("");
 
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
       System.out.println("game credts" + game.getCredits());
@@ -69,34 +70,32 @@ public class VPGui extends Application {
       Button play = new Button("PLAY");
       Button draw = new Button("DRAW");
       grid.add(creditsLabel, 0, 9);
-      draw.setOnAction(new EventHandler<ActionEvent>()
+      grid.add(amountWonLabel,0,8);
+      draw.setOnAction(event ->
       {
-         @Override
-         public void handle(ActionEvent event)
+         Image image1;
+         game.draw();
+         grid.add(play, 5, 2);
+         for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
-            Image image;
-            //System.out.println(game.playerHand.toString());
-            game.draw();
-            //System.out.println(game.playerHand.toString());
 
-            grid.add(play, 5, 2);
-            for (int k = 0; k < Hand.MAX_CARDS; k++)
-            {
-
-               game.playerHand.switchCard[k] = false;
-               holdLabel[k].setText("      ");
-               grid.add(credits[k], k, 2);
-               image = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-               cardImages[k] = new ImageView();
-               cardImages[k].setImage(image);
-               //btn[k] = new Button();
-               cardButton[k].setGraphic(new ImageView(image));
-            }
-            grid.getChildren().remove(draw);
-            game.evaluateHand();
-            creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
-            System.out.println("CREDITS: " + game.getCredits());
+            game.playerHand.switchCard[k] = false;
+            holdLabel[k].setText("      ");
+            grid.add(credits[k], k, 2);
+            image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+            cardImages[k] = new ImageView();
+            cardImages[k].setImage(image1);
+            //btn[k] = new Button();
+            cardButton[k].setGraphic(new ImageView(image1));
          }
+         grid.getChildren().remove(draw);
+         game.evaluateHand();
+         creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
+         if (game.evaluateHand() > 0)
+         {
+            amountWonLabel.setText("AMOUNT WON: " + game.evaluateHand());
+         }
+         System.out.println("CREDITS: " + game.getCredits());
       });
 
       Text oddsTable = new Text(HandEvaluator.oddsTable());
@@ -113,6 +112,8 @@ public class VPGui extends Application {
          {
             game.newHand();
             creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
+            amountWonLabel.setText("");
+            amountWonLabel.setText("");
             grid.add(draw, 0, 6);
             grid.getChildren().remove(play);
             for (int k = 0; k < Hand.MAX_CARDS; k++)
