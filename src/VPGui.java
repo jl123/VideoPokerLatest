@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
@@ -42,6 +43,7 @@ public class VPGui extends Application {
       Hand startHand = new Hand();
       Deck startDeck = new Deck(false);
       Label creditsLabel = new Label ("CREDITS: " + game.getCredits());
+      creditsLabel.setFont(new Font(20 ));
       Label amountWonLabel = new Label("");
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
 
