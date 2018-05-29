@@ -45,6 +45,7 @@ public class VPGui extends Application {
       Label creditsLabel = new Label ("CREDITS: " + game.getCredits());
       creditsLabel.setFont(new Font(20 ));
       Label amountWonLabel = new Label("");
+      amountWonLabel.setFont(new Font(20 ));
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
 
       for (int k = 0; k < Hand.MAX_CARDS; k++)
