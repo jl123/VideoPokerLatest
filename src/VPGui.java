@@ -30,8 +30,10 @@ public class VPGui extends Application {
       Button play = new Button("PLAY");
       Button draw = new Button("DRAW");
       StackPane root = new StackPane();
-      root.setStyle("-fx-background: blue;");
+      root.setMaxHeight(600);
+      root.setStyle("-fx-background: darkblue;");
       GridPane grid = new GridPane();
+
       grid.setHgap(15);
       grid.setVgap(15);
       Image image;
@@ -90,10 +92,11 @@ public class VPGui extends Application {
             image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
             cardImages[k] = new ImageView();
             //cardImages[k].setImage(image1);
-            cardImages[k].setFitWidth(20);
+            //cardImages[k].setFitWidth(40);
 
             //btn[k] = new Button();
             cardButton[k].setGraphic(new ImageView(image1));
+            //cardButton[k].setMaxWidth(40);
          }
          grid.getChildren().remove(draw);
          amountWon = game.evaluateHand();
@@ -104,28 +107,28 @@ public class VPGui extends Application {
          creditsLabel.setText("CREDITS: " + game.getCredits());
       });
 
-      Text oddsTable = new Text(HandEvaluator.oddsTable());
+      ImageView oddsTable = new ImageView("poker odds.jpg");
+      oddsTable.setPreserveRatio(true);
+      oddsTable.setFitWidth( 600 );
       root.getChildren().add(oddsTable);
       root.getChildren().add(grid);
-      play.setOnAction(new EventHandler<ActionEvent>()
+
+
+      play.setOnAction(event ->
       {
-         @Override
-         public void handle(ActionEvent event)
+         game.newHand();
+         creditsLabel.setText("CREDITS: " + game.getCredits());
+         amountWonLabel.setText("");
+         grid.add(draw, 0, 6);
+         grid.getChildren().remove(play);
+         for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
-            game.newHand();
-            creditsLabel.setText("CREDITS: " + game.getCredits());
-            amountWonLabel.setText("");
-            grid.add(draw, 0, 6);
-            grid.getChildren().remove(play);
-            for (int k = 0; k < Hand.MAX_CARDS; k++)
-            {
-               holdLabel[k].setText("        ");
-               grid.getChildren().remove(credits[k]);
-               Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-               cardImages[k] = new ImageView();
-               cardImages[k].setImage(img);
-               cardButton[k].setGraphic(new ImageView(img));
-            }
+            holdLabel[k].setText("        ");
+            grid.getChildren().remove(credits[k]);
+            Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+            cardImages[k] = new ImageView();
+            cardImages[k].setImage(img);
+            cardButton[k].setGraphic(new ImageView(img));
          }
       });
       grid.add(play, 5, 2);
