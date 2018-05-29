@@ -1,11 +1,4 @@
-import javafx.beans.property.StringProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import java.util.Arrays;
 
 public class GuiGame
 {
@@ -32,10 +25,18 @@ public class GuiGame
       deck = new Deck(shouldShuffle);
       playerHand.resetHand();
       credits -= bet;
+      Arrays.fill(playerHand.switchCard, true);
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         playerHand.switchCard[k] = true;
-         playerHand.takeCard(deck.dealCard());
+         //playerHand.switchCard[k] = true;
+         try
+         {
+            playerHand.takeCard(deck.dealCard());
+         }
+         catch (OutOfCardsException e)
+         {
+            System.out.println(e.getMessage());
+         }
       }
       return playerHand;
    }
@@ -46,7 +47,17 @@ public class GuiGame
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
          if (playerHand.switchCard[k])
-            playerHand.replaceCard(k, deck.dealCard());
+         {
+            try
+            {
+               playerHand.replaceCard(k, deck.dealCard());
+            }
+            catch(OutOfCardsException e)
+            {
+               System.out.println(e.getMessage());
+            }
+         }
+
       }
       return playerHand;
    }

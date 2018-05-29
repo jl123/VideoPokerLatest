@@ -8,7 +8,7 @@ class Hand
 {
    public static int MAX_CARDS = 5;
    private Card[] hand;
-   public LinkedList sortedHand;
+   protected LinkedList sortedHand;
 
    boolean[] switchCard = new boolean[Hand.MAX_CARDS];
    private int numCards = 0;
@@ -103,8 +103,15 @@ class Hand
       {
          if (switchCard[k])
          {
-            Card tempCard = deck.dealCard();
-
+            Card tempCard = null;
+            try
+            {
+               tempCard = deck.dealCard();
+            }
+            catch (OutOfCardsException e)
+            {
+               System.out.println(e.getMessage());
+            }
             remove(sortedHand, this.inspectCard(k));
             this.replaceCard(k, tempCard);
             insert(sortedHand, tempCard);

@@ -19,6 +19,7 @@ public class HandTest
       testHand.takeCard(ddd);
       testHand.takeCard(eee);
       assertFalse(HandEvaluator.isFullHouse(testHand.sortedHand));
+      assertTrue(HandEvaluator.isSet(testHand.sortedHand));
    }
 
 }

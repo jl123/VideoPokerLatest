@@ -41,14 +41,21 @@ public class VideoPoker
 
             } catch (NumberFormatException e)
             {
-               System.out.println("Enter a card value between 1 and 5, then press ENTER to mark it for redraw. "
+               System.out.println("Enter a card value between 1 and 5, then press ENTER to HOLD it. "
                      + "Press ENTER again when ready to draw.");
             }
          } while (betInt < 1 || betInt > 5);
          credits = credits - betInt;
          for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
-            playerHand.takeCard(theDeck.dealCard());
+            try
+            {
+               playerHand.takeCard(theDeck.dealCard());
+            }
+            catch (OutOfCardsException e)
+            {
+               System.out.println(e.getMessage());
+            }
             System.out.println("Card " + (k + 1) + ": "
                   + playerHand.inspectCard(k).toString());
          }

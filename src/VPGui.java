@@ -13,12 +13,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.BorderPane;
-
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-
-import javax.swing.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class VPGui extends Application {
 
@@ -31,44 +27,52 @@ public class VPGui extends Application {
       ImageView cardImages[] = new ImageView[Hand.MAX_CARDS];
       Button cardButton[] = new Button[Hand.MAX_CARDS];
       Button credits[] = new Button[5];
+      Button play = new Button("PLAY");
+      Button draw = new Button("DRAW");
       StackPane root = new StackPane();
+      root.setStyle("-fx-background: blue;");
       GridPane grid = new GridPane();
       grid.setHgap(15);
       grid.setVgap(15);
       Image image;
+
+
       Hand startHand = new Hand();
       Deck startDeck = new Deck(false);
-      Label creditsLabel = new Label ("CREDITS " + String.valueOf(game.getCredits()));
+      Label creditsLabel = new Label ("CREDITS: " + game.getCredits());
       Label amountWonLabel = new Label("");
-
       Label[] holdLabel = new Label[Hand.MAX_CARDS];
-      System.out.println("game credts" + game.getCredits());
 
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         startHand.takeCard(startDeck.dealCard());
+         try
+         {
+            startHand.takeCard(startDeck.dealCard());
+         }
+         catch (OutOfCardsException e)
+         {
+            System.out.println(e.getMessage());
+         }
          image = new Image(CardImageUtils.getImage(startHand.inspectCard(k)));
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
 
-
          holdLabel[k] = new Label();
          cardButton[k] = new Button();
          cardButton[k].setGraphic(new ImageView(image));
-         cardButton[k].setOnAction(new JoesEventHandler(game, holdLabel, k));
-
-         Button play = new Button("PLAY");
-
-         //CREDITS BUTTONS
+         cardButton[k].setOnAction(new JoesEventHandler(game, holdLabel, k));//CREDITS BUTTONS
+         cardButton[k].setStyle("-fx-focus-color: transparent;");
+         cardButton[k].setStyle("-fx-background-color: transparent;");
          int credit = k + 1;
          credits[k] = new Button(String.valueOf(credit));
+         credits[k].setStyle("-fx-background-color: yellow;");
+         credits[k].setStyle("-fx-focus-color: firebrick");
          grid.add(cardButton[k], k, 0);
          grid.add(holdLabel[k], k, 1);
          grid.add(credits[k], k, 2);
          credits[k].setOnAction(new CreditEventsHandler(k+1, game));
       }
-      Button play = new Button("PLAY");
-      Button draw = new Button("DRAW");
+
       grid.add(creditsLabel, 0, 9);
       grid.add(amountWonLabel,0,8);
       draw.setOnAction(event ->
@@ -85,7 +89,9 @@ public class VPGui extends Application {
             grid.add(credits[k], k, 2);
             image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
             cardImages[k] = new ImageView();
-            cardImages[k].setImage(image1);
+            //cardImages[k].setImage(image1);
+            cardImages[k].setFitWidth(20);
+
             //btn[k] = new Button();
             cardButton[k].setGraphic(new ImageView(image1));
          }
@@ -93,27 +99,21 @@ public class VPGui extends Application {
          amountWon = game.evaluateHand();
          if (amountWon > 0)
          {
-            amountWonLabel.setText("AMOUNT WON: " + amountWon);
+            amountWonLabel.setText("YOU WON: " + amountWon);
          }
-         creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
-         System.out.println("CREDITS: " + game.getCredits());
+         creditsLabel.setText("CREDITS: " + game.getCredits());
       });
 
       Text oddsTable = new Text(HandEvaluator.oddsTable());
       root.getChildren().add(oddsTable);
-
-      //GuiGame.newGame(grid);
-
       root.getChildren().add(grid);
-
       play.setOnAction(new EventHandler<ActionEvent>()
       {
          @Override
          public void handle(ActionEvent event)
          {
             game.newHand();
-            creditsLabel.setText("CREDITS " + String.valueOf(game.getCredits()));
-            amountWonLabel.setText("");
+            creditsLabel.setText("CREDITS: " + game.getCredits());
             amountWonLabel.setText("");
             grid.add(draw, 0, 6);
             grid.getChildren().remove(play);
@@ -124,13 +124,8 @@ public class VPGui extends Application {
                Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
                cardImages[k] = new ImageView();
                cardImages[k].setImage(img);
-               //btn[k] = new Button();
                cardButton[k].setGraphic(new ImageView(img));
-               //System.out.println(img.toSring());
-               //grid.getChildren().remove(draw);
-               //System.out.println(HandEvaluator.getHandVal(game.playerHand));
             }
-
          }
       });
       grid.add(play, 5, 2);
@@ -170,15 +165,12 @@ public class VPGui extends Application {
       Hand playerHand;
       Label holdDrawLabel[];
       GuiGame game;
-      //StringProperty labelProperties[];
       JoesEventHandler(GuiGame game, Label holdDrawLabel[], int cardNum)
       {
          this.cardNum = cardNum;
          this.playerHand = game.playerHand;
          this.holdDrawLabel = holdDrawLabel;
          this.game = game;
-
-
       }
 
       @Override

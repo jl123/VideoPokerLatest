@@ -17,7 +17,14 @@ public class DeckTest
       Deck deck = new Deck(false);
       for (int i = 0; i < 55; i++)
       {
-         System.out.println(deck.dealCard());
+         try
+         {
+            System.out.println(deck.dealCard());
+         }
+         catch(OutOfCardsException e)
+         {
+            System.out.println(e.getMessage());
+         }
       }
    }
 }
