@@ -5,6 +5,7 @@ import javafx.beans.property.StringPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -31,10 +32,14 @@ public class VPGui extends Application {
       Button play = new Button("PLAY");
       Button draw = new Button("DRAW");
       StackPane root = new StackPane();
-      root.setMaxHeight(600);
+      //not working...
+      root.setPrefHeight(300);
+      root.setMaxSize(300,300);
+      ////////////////
       root.setStyle("-fx-background: darkblue;");
       GridPane grid = new GridPane();
-
+      //set true for testing
+      grid.setGridLinesVisible(false);
       grid.setHgap(15);
       grid.setVgap(15);
       Image image;
@@ -78,8 +83,23 @@ public class VPGui extends Application {
          credits[k].setOnAction(new CreditEventsHandler(k+1, game));
       }
 
-      grid.add(creditsLabel, 0, 9);
-      grid.add(amountWonLabel,0,8);
+
+
+      ImageView oddsTable = new ImageView("poker odds.jpg");
+      root.setAlignment(oddsTable, Pos.BOTTOM_CENTER);
+      oddsTable.setPreserveRatio(true);
+      oddsTable.setFitWidth( 600 );
+      oddsTable.setSmooth(true);
+      root.getChildren().add(oddsTable);
+
+      root.getChildren().add(creditsLabel);
+      StackPane.setAlignment(creditsLabel, Pos.CENTER_LEFT);
+      root.getChildren().add(amountWonLabel);
+      StackPane.setAlignment(amountWonLabel, Pos.CENTER_RIGHT);
+
+      root.getChildren().add(grid);
+      root.setAlignment(grid, Pos.BOTTOM_CENTER);
+
       draw.setOnAction(event ->
       {
          Image image1;
@@ -109,13 +129,6 @@ public class VPGui extends Application {
          }
          creditsLabel.setText("CREDITS: " + game.getCredits());
       });
-
-      ImageView oddsTable = new ImageView("poker odds.jpg");
-      oddsTable.setPreserveRatio(true);
-      oddsTable.setFitWidth( 600 );
-      root.getChildren().add(oddsTable);
-      root.getChildren().add(grid);
-
 
       play.setOnAction(event ->
       {
@@ -185,7 +198,7 @@ public class VPGui extends Application {
          playerHand.switchCard[cardNum] = !playerHand.switchCard[cardNum];
          if (!playerHand.switchCard[cardNum] && game.getDealt())
          {
-            holdDrawLabel[cardNum].setText("    HOLD     ");
+            holdDrawLabel[cardNum].setText("      HOLD      ");
          }
          else
          {

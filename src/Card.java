@@ -23,7 +23,7 @@ class Card implements Comparable<Card>
       {
          return this.value;
       }
-   };
+   }
    
    public Card(Rank rank, Suit suit)
    {
@@ -56,5 +56,11 @@ class Card implements Comparable<Card>
       if (this.getRank() == other.getRank())
          return this.suit.ordinal() - other.suit.ordinal();
       return this.rank.value - other.rank.value;
+   }
+
+   public static void main(String[] args)
+   {
+      Card test = new Card(Rank.ten, Suit.diamonds);
+      System.out.println(test.toString());
    }
 }
