@@ -1,28 +1,26 @@
 import java.util.Arrays;
 
-public class GuiGame
+class GuiGame
 {
-   final boolean shouldShuffle = true;
 
    private int bet;
    private int credits;
    private Deck deck;
-   Hand playerHand;
+   final Hand playerHand = new Hand();
    private boolean dealt;
 
 
-   public GuiGame()
+   GuiGame()
    {
       bet = 5;
       credits = 1000;
-      playerHand = new Hand();
       dealt = false;
    }
 
-   public Hand newHand()
+   void newHand()
    {
       dealt = true;
-      deck = new Deck(shouldShuffle);
+      deck = new Deck(true);
       playerHand.resetHand();
       credits -= bet;
       Arrays.fill(playerHand.switchCard, true);
@@ -38,10 +36,9 @@ public class GuiGame
             System.out.println(e.getMessage());
          }
       }
-      return playerHand;
    }
 
-   public Hand draw()
+   void draw()
    {
       dealt = false;
       for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -59,7 +56,6 @@ public class GuiGame
          }
 
       }
-      return playerHand;
    }
 
    public int evaluateHand()
@@ -74,14 +70,12 @@ public class GuiGame
 
    public int getBet(){ return bet; }
 
-   public boolean setBet(int bet)
+   public void setBet(int bet)
    {
       if ( bet >= HandEvaluator.MIN_BET && bet <= HandEvaluator.MAX_BET)
       {
          this.bet = bet;
-         return true;
       }
-      return false;
    }
 
 

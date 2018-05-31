@@ -22,9 +22,9 @@ public class HandEvaluatorTest
       testCards[4] = new Card(Card.Rank.ace, Card.Suit.spades);
       placeCards(hand, testCards);
 
-      for (int k = 0; k < testCards.length; k++)
+      for (final Card testCard : testCards)
       {
-         HandEvaluator.insert(sortedHand, testCards[k]);
+         HandEvaluator.insert(sortedHand, testCard);
       }
       assertEquals(true, HandEvaluator.remove(sortedHand, testCards[cardDel]));
    }
@@ -196,11 +196,9 @@ public class HandEvaluatorTest
    }
 
 
-   public void placeCards(Hand hand, Card[] cards)
+   private void placeCards(Hand hand, Card[] cards)
    {
-      for (int i = 0; i < cards.length; i++)
-         hand.takeCard(cards[i]);
-
+      for (final Card card : cards) hand.takeCard(card);
    }
 }
 

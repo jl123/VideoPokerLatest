@@ -1,12 +1,11 @@
-import javafx.scene.image.Image;
-public class CardImageUtils
+class CardImageUtils
 {
    private CardImageUtils()
    {
       throw new RuntimeException("No no Peanut");
    }
 
-   public static String getImage(Card card)
+   static String getImage(Card card)
    {
       return rankToChar(card.getRank()) + suitToChar(card.getSuit()) + ".gif";
    }

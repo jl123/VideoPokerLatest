@@ -1,10 +1,6 @@
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.StringPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,10 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.scene.text.Text;
 
 public class VPGui extends Application {
 
@@ -24,7 +18,6 @@ public class VPGui extends Application {
    @Override
    public void start(Stage primaryStage) {
       GuiGame game = new GuiGame();
-      boolean gameStart;
 
       ImageView cardImages[] = new ImageView[Hand.MAX_CARDS];
       Button cardButton[] = new Button[Hand.MAX_CARDS];
@@ -36,6 +29,7 @@ public class VPGui extends Application {
       root.setPrefHeight(300);
       root.setMaxSize(300,300);
       ////////////////
+      //noinspection SpellCheckingInspection
       root.setStyle("-fx-background: darkblue;");
       GridPane grid = new GridPane();
       //set true for testing
@@ -86,7 +80,7 @@ public class VPGui extends Application {
 
 
       ImageView oddsTable = new ImageView("poker odds.jpg");
-      root.setAlignment(oddsTable, Pos.BOTTOM_CENTER);
+      StackPane.setAlignment(oddsTable, Pos.BOTTOM_CENTER);
       oddsTable.setPreserveRatio(true);
       oddsTable.setFitWidth( 600 );
       oddsTable.setSmooth(true);
@@ -98,7 +92,7 @@ public class VPGui extends Application {
       StackPane.setAlignment(amountWonLabel, Pos.CENTER_RIGHT);
 
       root.getChildren().add(grid);
-      root.setAlignment(grid, Pos.BOTTOM_CENTER);
+      StackPane.setAlignment(grid, Pos.BOTTOM_CENTER);
 
       draw.setOnAction(event ->
       {
@@ -114,12 +108,7 @@ public class VPGui extends Application {
             grid.add(credits[k], k, 2);
             image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
             cardImages[k] = new ImageView();
-            //cardImages[k].setImage(image1);
-            //cardImages[k].setFitWidth(40);
-
-            //btn[k] = new Button();
             cardButton[k].setGraphic(new ImageView(image1));
-            //cardButton[k].setMaxWidth(40);
          }
          grid.getChildren().remove(draw);
          amountWon = game.evaluateHand();
@@ -162,8 +151,8 @@ public class VPGui extends Application {
 
    private static class CreditEventsHandler implements EventHandler<ActionEvent>
    {
-      int credit;
-      GuiGame game;
+      final int credit;
+      final GuiGame game;
       CreditEventsHandler(int credit, GuiGame game)
       {
          this.credit = credit;
@@ -180,10 +169,10 @@ public class VPGui extends Application {
 
    private static class JoesEventHandler implements EventHandler<ActionEvent>
    {
-      int cardNum;
-      Hand playerHand;
-      Label holdDrawLabel[];
-      GuiGame game;
+      final int cardNum;
+      final Hand playerHand;
+      final Label[] holdDrawLabel;
+      final GuiGame game;
       JoesEventHandler(GuiGame game, Label holdDrawLabel[], int cardNum)
       {
          this.cardNum = cardNum;

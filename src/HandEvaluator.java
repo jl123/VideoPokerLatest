@@ -6,19 +6,19 @@ public class HandEvaluator
    public static final int MIN_BET = 1;
    public static final int MAX_BET = 5;
 
-   public static LinkedList<Card> sortedHand;
+   private static LinkedList<Card> sortedHand;
    
    //ODDS
-   public static final int royalFlushMaxWin = 800;
-   public static final int royalFlushWin = 250;
-   public static final int straightFlushWin = 50;
-   public static final int quadsWin = 25;
-   public static final int fullHouseWin = 9;
-   public static final int flushWin = 6;
-   public static final int straightWin = 4;
-   public static final int setWin = 3;
-   public static final int twoPairWin = 2;
-   public static final int pairWin = 1;
+   private static final int royalFlushMaxWin = 800;
+   private static final int royalFlushWin = 250;
+   private static final int straightFlushWin = 50;
+   private static final int quadsWin = 25;
+   private static final int fullHouseWin = 9;
+   private static final int flushWin = 6;
+   private static final int straightWin = 4;
+   private static final int setWin = 3;
+   private static final int twoPairWin = 2;
+   private static final int pairWin = 1;
    
 
 
@@ -156,9 +156,9 @@ public class HandEvaluator
    }
 
 
-   public static handVal getHandVal(Hand hand)
+   static handVal getHandVal(Hand hand)
    {
-      sortedHand = new LinkedList<Card>();
+      sortedHand = new LinkedList<>();
       //sortedHand.clear();
       sortHand(hand);
 
@@ -185,35 +185,29 @@ public class HandEvaluator
       return handVal.loser;
       
    }
-   //incomplete
-   public static int amountWon(LinkedList<Card> hand, int bet)
-   {
-     return 1;
-   }
 
-   public static void sortHand(Hand hand)
+   private static void sortHand(Hand hand)
    {
       for (int i = 0; i < hand.getNumCards(); i++)
       {
          insert(sortedHand, hand.inspectCard(i));
       }
-      sortedHand.toString();
    }
    
-   public static boolean isRoyalFlush(LinkedList<Card> hand)
+   private static boolean isRoyalFlush(LinkedList<Card> hand)
    {
       return isFlush(hand) && isStraight(hand) &&
             hand.get(4).getRank() == Card.Rank.ace;
                          
    }
    
-   public static boolean isStraightFlush(LinkedList<Card> hand)
+   private static boolean isStraightFlush(LinkedList<Card> hand)
    {
       return isFlush(hand) && isStraight(hand) &&
             hand.get(4).getRank() != Card.Rank.ace;
    }
    
-   public static boolean isQuads(LinkedList<Card> hand)
+   private static boolean isQuads(LinkedList<Card> hand)
    {
       return ( hand.get(0).getRank() == hand.get(1).getRank() &&
             hand.get(0).getRank() == hand.get(2).getRank() &&
@@ -224,12 +218,12 @@ public class HandEvaluator
             hand.get(1).getRank() == hand.get(4).getRank() );
    }
    
-   public static boolean isFullHouse(LinkedList<Card> hand)
+   static boolean isFullHouse(List<Card> hand)
    {
       return isPair(hand) && isSet(hand);
    }
 
-   public static boolean isFlush(LinkedList<Card> hand)
+   private static boolean isFlush(LinkedList<Card> hand)
    {
       Map<Card.Suit, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getSuit));
 
@@ -243,7 +237,7 @@ public class HandEvaluator
       return false;
    }
 
-   static boolean isStraight(LinkedList<Card> hand)
+   private static boolean isStraight(LinkedList<Card> hand)
    {
       int firstCardVal = hand.get(0).getRank().value;
 
@@ -259,7 +253,7 @@ public class HandEvaluator
             hand.get(4).getRank() == Card.Rank.ace );
    }
    //incomplete--------get rid of .value?
-   static boolean isSet(LinkedList<Card> hand)
+   static boolean isSet(List<Card> hand)
    {
 
       Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
@@ -274,7 +268,7 @@ public class HandEvaluator
       return false;
    }
    //incomplete
-   static boolean isTwoPair(LinkedList<Card> hand)
+   private static boolean isTwoPair(List<Card> hand)
    {
       Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
       int numPairs = 0;
@@ -288,7 +282,7 @@ public class HandEvaluator
       return numPairs == 2;
    }
    //incomplete
-   static boolean isPairJorHigher(LinkedList<Card> hand)
+   private static boolean isPairJorHigher(List<Card> hand)
    {
       Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
       int numPairs = 0;
@@ -304,7 +298,7 @@ public class HandEvaluator
       }
       return numPairs == 1 && rankVal > 10;
    }
-   static boolean isPair(LinkedList<Card> hand)
+   private static boolean isPair(List<Card> hand)
    {
       Map<Card.Rank, List<Card>> collect =
             hand.stream().collect(Collectors.groupingBy(Card::getRank));
@@ -327,34 +321,34 @@ public class HandEvaluator
 
    static void insert(LinkedList<Card> cardList, Card card)
    {
-      ListIterator<Card> iter;
+      ListIterator<Card> iterator;
       Card listX;
       if (card == null)
       {
          return;
       }
 
-      for (iter = cardList.listIterator(); iter.hasNext(); )
+      for (iterator = cardList.listIterator(); iterator.hasNext(); )
       {
-         listX = iter.next();
+         listX = iterator.next();
          if (card.compareTo(listX) < 0)
          {
-            iter.previous(); // back up one
+            iterator.previous(); // back up one
             break;
          }
       }
-      iter.add(card);     //add copy to LinkedList+
+      iterator.add(card);     //add copy to LinkedList+
    }
 
    //REMOVE
    static boolean remove(LinkedList<Card> cardList, Card card)
    {
-      ListIterator<Card> iter;
-      for (iter = cardList.listIterator(); iter.hasNext(); )
+      ListIterator<Card> iterator;
+      for (iterator = cardList.listIterator(); iterator.hasNext(); )
       {
-         if (card.compareTo(iter.next()) == 0 )
+         if (card.compareTo(iterator.next()) == 0 )
          {
-            iter.remove();
+            iterator.remove();
             return true;   // we found, we removed, we return
          }
       }
@@ -362,6 +356,7 @@ public class HandEvaluator
    }
 
    //REMOVEALL
+   @SuppressWarnings("unused")
    static boolean removeAll(LinkedList<Card> cardList, Card card)
    {
       boolean retFlag = false, shouldContinue = true;

@@ -5,14 +5,14 @@ class Card implements Comparable<Card>
 
    
    // static class constants (for suits)
-   static enum Suit { clubs , diamonds, hearts, spades };
+   enum Suit { clubs , diamonds, hearts, spades }
    
-   static enum Rank 
+   enum Rank
    {
       two (2), three (3), four(4), five (5), six (6), seven (7), eight (8), 
             nine (9), ten (10), jack (11), queen (12), king (13), ace (14);
          
-      int value;
+      final int value;
       
       Rank(int value)
       {
@@ -25,18 +25,18 @@ class Card implements Comparable<Card>
       }
    }
    
-   public Card(Rank rank, Suit suit)
+   Card(Rank rank, Suit suit)
    {
       this.rank = rank;
       this.suit = suit;
    }
    
    // accessors
-   public Rank getRank()
+   Rank getRank()
    {
       return this.rank;
    }
-   public Suit getSuit()
+   Suit getSuit()
    {
       return this.suit;
    }

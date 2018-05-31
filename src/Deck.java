@@ -1,12 +1,11 @@
-import java.util.Random;
 import java.util.*;
 
+@SuppressWarnings("unused")
 class Deck
 {   
    private final Stack<Card> theCards;
-   //private final  Stack <Card> dealtCards;
 
-   //constuctors
+   //constructors
    Deck(boolean shouldShuffle)
    {
       theCards = new Stack<>();
@@ -24,11 +23,11 @@ class Deck
       }
    }
    //deal
-   public Card dealCard() throws OutOfCardsException
+   Card dealCard() throws OutOfCardsException
    {
       if (theCards.size() > 0)
          return theCards.pop();
-      throw new OutOfCardsException("Deck is empty.");
+      throw new OutOfCardsException();
    }
 
    //
@@ -39,7 +38,7 @@ class Deck
 
    }
 
-   public int size()
+   int size()
    {
       return this.theCards.size();
    }
@@ -55,5 +54,5 @@ class Deck
 
 class OutOfCardsException extends Exception
 {
-   OutOfCardsException(String message){ super(message); }
+   OutOfCardsException(){ super("Deck is empty."); }
 }

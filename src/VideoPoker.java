@@ -1,12 +1,12 @@
 import java.util.*;
 
-public class VideoPoker
+class VideoPoker
 {
    public static void main (String[] args)
    {
       final boolean shuffle = true;
       Deck theDeck;
-      String bet = "";
+      String bet;
       int betInt = 5;
       int credits = 1000;
       int gameNum = 0;
@@ -77,12 +77,7 @@ public class VideoPoker
                muckInt--;
                if ((muckInt >= 0 && muckInt < Hand.MAX_CARDS) && !muckCard.isEmpty())
                {
-                  if (playerHand.switchCard[muckInt] == true)
-                  {
-                     playerHand.switchCard[muckInt] = false;
-                  }
-                  else
-                     playerHand.switchCard[muckInt] = true;
+                  playerHand.switchCard[muckInt] = !playerHand.switchCard[muckInt];
                   for (int k = 0; k < Hand.MAX_CARDS; k++)
                   System.out.println("Card " + (k + 1) + ": "
                         + playerHand.inspectCard(k).toString() + "   DISCARD: "
@@ -112,7 +107,7 @@ public class VideoPoker
 
 class NoCardException extends Exception
 {
-   public NoCardException()
+   NoCardException()
    {
       super( "-----Int must be between 1 and 5------" );
    }
