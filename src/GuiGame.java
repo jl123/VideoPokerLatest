@@ -1,5 +1,5 @@
 import java.util.Arrays;
-
+//Game model for later use.
 class GuiGame
 {
 
@@ -58,19 +58,18 @@ class GuiGame
       }
    }
 
-   public int evaluateHand()
+   int evaluateHand()
    {
       int creditsWon = HandEvaluator.getHandVal(playerHand).winVal(bet);
-      System.out.println("WON: " + String.valueOf(creditsWon));
       credits += HandEvaluator.getHandVal(playerHand).winVal(bet);
       return creditsWon;
    }
 
-   public int getCredits(){ return credits; }
+   int getCredits(){ return credits; }
 
-   public int getBet(){ return bet; }
+   int getBet(){ return bet; }
 
-   public void setBet(int bet)
+   void setBet(int bet)
    {
       if ( bet >= HandEvaluator.MIN_BET && bet <= HandEvaluator.MAX_BET)
       {
@@ -79,7 +78,7 @@ class GuiGame
    }
 
 
-   public boolean getDealt()
+   boolean getDealt()
    {
       return dealt;
    }

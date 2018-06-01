@@ -49,6 +49,12 @@ class Deck
          return theCards.get(k);
       return null;
    }
+
+   //for multi-hand to be added later
+   void remove(Card card)
+   {
+
+   }
    
 }
 

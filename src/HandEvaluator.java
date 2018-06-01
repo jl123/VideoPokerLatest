@@ -1,10 +1,10 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HandEvaluator
+class HandEvaluator
 {
-   public static final int MIN_BET = 1;
-   public static final int MAX_BET = 5;
+   static final int MIN_BET = 1;
+   static final int MAX_BET = 5;
 
    private static LinkedList<Card> sortedHand;
    
@@ -22,7 +22,7 @@ public class HandEvaluator
    
 
 
-   public static String oddsTable()
+   static String oddsTable()
    {
 
             return
