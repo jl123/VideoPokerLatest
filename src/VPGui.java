@@ -1,6 +1,8 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,9 +34,10 @@ public class VPGui extends Application {
       root.setStyle("-fx-background: darkblue;");
       GridPane grid = new GridPane();
       //set true for testing
-      grid.setGridLinesVisible(false);
+      grid.setGridLinesVisible(true);
       grid.setHgap(30);
-      grid.setVgap(10);
+      grid.setVgap(20);
+      grid.setPadding(new Insets(0, 0, 30, 0));
 
       ImageView[] holdView = new ImageView[Hand.MAX_CARDS];
       for (int i = 0; i < Hand.MAX_CARDS; i++)
@@ -44,10 +47,10 @@ public class VPGui extends Application {
 
       for (int i = 0; i < NUM_COLUMNS; i++) {
          ColumnConstraints colConst = new ColumnConstraints();
-         colConst.setPercentWidth(100/ NUM_COLUMNS);
+         colConst.setPercentWidth(100 / NUM_COLUMNS);
          grid.getColumnConstraints().add(colConst);
       }
-      grid.setAlignment(Pos.TOP_CENTER);
+      grid.setAlignment(Pos.BOTTOM_CENTER);
       Image image;
 
 
@@ -70,21 +73,22 @@ public class VPGui extends Application {
             System.out.println(e.getMessage());
          }
          image = new Image(CardImageUtils.getImage(startHand.inspectCard(k)));
+
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
-
          holdLabel[k] = new Label();
          cardButton[k] = new Button();
          cardButton[k].setGraphic(new ImageView(image));
          cardButton[k].setOnAction(new JoesEventHandler(game, grid, holdLabel, holdView, k));//CREDITS BUTTONS
          cardButton[k].setStyle("-fx-focus-color: transparent;");
          cardButton[k].setStyle("-fx-background-color: transparent;");
+         GridPane.setHalignment(cardButton[k], HPos.CENTER);
          int credit = k + 1;
          credits[k] = new Button(String.valueOf(credit));
          credits[k].setStyle("-fx-background-color: pink;");////////////////get this to work
          credits[k].setStyle("-fx-focus-color: firebrick");
          grid.add(cardButton[k], k, 0);
-         grid.add(holdLabel[k], k, 1);
+         //grid.add(holdLabel[k], k, 1);
          grid.add(credits[k], k, 2);
          credits[k].setOnAction(new CreditEventsHandler(k+1, game));
       }
@@ -92,7 +96,7 @@ public class VPGui extends Application {
 
 
       ImageView oddsTable = new ImageView("poker odds.jpg");
-      StackPane.setAlignment(oddsTable, Pos.BOTTOM_CENTER);
+      StackPane.setAlignment(oddsTable, Pos.TOP_CENTER);
       oddsTable.setPreserveRatio(true);
       oddsTable.setFitWidth( 600 );
       oddsTable.setSmooth(true);
@@ -116,10 +120,12 @@ public class VPGui extends Application {
          {
 
             game.playerHand.switchCard[k] = false;
-            holdLabel[k].setText("      ");
+            //holdLabel[k].setText("      ");
             grid.add(credits[k], k, 2);
             image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
             cardImages[k] = new ImageView();
+            cardImages[k].setFitHeight(image1.getHeight() * 2.0);
+            cardImages[k].setPreserveRatio(true);
             cardButton[k].setGraphic(new ImageView(image1));
             grid.getChildren().remove(holdView[k]);
          }
@@ -143,7 +149,7 @@ public class VPGui extends Application {
          grid.getChildren().remove(play);
          for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
-            holdLabel[k].setText("        ");
+            //holdLabel[k].setText("        ");
             grid.getChildren().remove(credits[k]);
             grid.getChildren().remove(holdView[k]);
             Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
@@ -153,7 +159,7 @@ public class VPGui extends Application {
          }
       });
       grid.add(play, 5, 2);
-      Scene scene = new Scene(root, 750, 700);
+      Scene scene = new Scene(root, 900, 700);
       primaryStage.setTitle("Video Poker!");
       primaryStage.setScene(scene);
       primaryStage.setResizable(false);
@@ -208,13 +214,14 @@ public class VPGui extends Application {
          playerHand.switchCard[cardNum] = !playerHand.switchCard[cardNum];
          if (!playerHand.switchCard[cardNum] && game.getDealt())
          {
-            holdDrawLabel[cardNum].setText("      HOLD      ");
+            //holdDrawLabel[cardNum].setText("      HOLD      ");
             grid.add(holdView[cardNum], cardNum, 0);
+            GridPane.setHalignment(holdView[cardNum], HPos.CENTER);
 
          }
          else
          {
-            holdDrawLabel[cardNum].setText("      ");
+            //holdDrawLabel[cardNum].setText("      ");
             grid.getChildren().remove(holdView[cardNum]);
          }
       }
