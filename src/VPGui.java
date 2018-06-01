@@ -34,7 +34,7 @@ public class VPGui extends Application {
       root.setStyle("-fx-background: darkblue;");
       GridPane grid = new GridPane();
       //set true for testing
-      grid.setGridLinesVisible(true);
+      grid.setGridLinesVisible(false);
       grid.setHgap(30);
       grid.setVgap(20);
       grid.setPadding(new Insets(0, 0, 30, 0));
