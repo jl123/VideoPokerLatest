@@ -12,10 +12,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import static java.lang.Thread.sleep;
+
 public class VPGui extends Application {
 
 
@@ -56,11 +61,17 @@ public class VPGui extends Application {
 
       Hand startHand = new Hand();
       Deck startDeck = new Deck(false);
+
       Label creditsLabel = new Label ("CREDITS: " + game.getCredits() + "\n\n\n");
       creditsLabel.setFont(new Font(20 ));
+
+
+      Label handRankLabel = new Label("");
+      handRankLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
+      handRankLabel.setTextFill(Color.valueOf("red"));
+
       Label amountWonLabel = new Label("");
       amountWonLabel.setFont(new Font(20 ));
-      Label[] holdLabel = new Label[Hand.MAX_CARDS];
 
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
@@ -76,10 +87,10 @@ public class VPGui extends Application {
 
          cardImages[k] = new ImageView();
          cardImages[k].setImage(image);
-         holdLabel[k] = new Label();
+         //holdLabel[k] = new Label();
          cardButton[k] = new Button();
          cardButton[k].setGraphic(new ImageView(image));
-         cardButton[k].setOnAction(new JoesEventHandler(game, grid, holdLabel, holdView, k));//CREDITS BUTTONS
+         cardButton[k].setOnAction(new HoldEventHandler(game, grid, holdView, k));//CREDITS BUTTONS
          cardButton[k].setStyle("-fx-focus-color: transparent;");
          cardButton[k].setStyle("-fx-background-color: transparent;");
          GridPane.setHalignment(cardButton[k], HPos.CENTER);
@@ -104,18 +115,20 @@ public class VPGui extends Application {
 
       root.getChildren().add(creditsLabel);
       StackPane.setAlignment(creditsLabel, Pos.CENTER_LEFT);
+
+      root.getChildren().add(handRankLabel);
+      StackPane.setAlignment(handRankLabel, Pos.CENTER);
+
       root.getChildren().add(amountWonLabel);
       StackPane.setAlignment(amountWonLabel, Pos.CENTER_RIGHT);
 
       root.getChildren().add(grid);
       StackPane.setAlignment(grid, Pos.TOP_CENTER);
-
       draw.setOnAction(event ->
       {
          Image image1;
          int amountWon;
          game.draw();
-         grid.add(play, 5, 2);
          for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
 
@@ -134,10 +147,24 @@ public class VPGui extends Application {
          if (amountWon > 0)
          {
             amountWonLabel.setText("YOU WON: " + amountWon);
-            Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
-            runnable.run();
+            String audio = "sound_win.wav";     // For example
+            Media sound = new Media(getClass().getResource(audio).toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
          }
+         try
+         {
+            sleep(300);
+         } catch (InterruptedException e)
+         {
+            e.printStackTrace();
+         }
+         grid.add(play, 5, 2);
          creditsLabel.setText("CREDITS: " + game.getCredits() + "\n\n\n");
+         if (!game.getHandVal().equals("LOSER"))
+         {
+            handRankLabel.setText(game.getHandVal());
+         }
       });
 
       play.setOnAction(event ->
@@ -145,6 +172,7 @@ public class VPGui extends Application {
          game.newHand();
          creditsLabel.setText("CREDITS: " + game.getCredits() + "\n\n\n");
          amountWonLabel.setText("");
+         handRankLabel.setText("");
          grid.add(draw, 5, 2);
          grid.getChildren().remove(play);
          for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -189,20 +217,19 @@ public class VPGui extends Application {
 
    }
 
-   private static class JoesEventHandler implements EventHandler<ActionEvent>
+   private static class HoldEventHandler implements EventHandler<ActionEvent>
    {
       final int cardNum;
       final Hand playerHand;
-      final Label[] holdDrawLabel;
       final GuiGame game;
       final GridPane grid;
       final ImageView[] holdView;
 
-      JoesEventHandler(GuiGame game, GridPane grid, Label[] holdDrawLabel, ImageView[] holdView, int cardNum)
+
+      HoldEventHandler(GuiGame game, GridPane grid, ImageView[] holdView, int cardNum)
       {
          this.cardNum = cardNum;
          this.playerHand = game.playerHand;
-         this.holdDrawLabel = holdDrawLabel;
          this.game = game;
          this.grid = grid;
          this.holdView = holdView;
