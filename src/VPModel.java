@@ -1,20 +1,21 @@
 import java.util.Arrays;
 
-class GuiGame
+class VPModel
 {
-
+   final public int MAX_BET = 5;
    private int bet;
    private int credits;
    private Deck deck;
-   final Hand playerHand = new Hand();
+   final Hand playerHand;
    private boolean dealt;
 
-
-   GuiGame()
+   VPModel()
    {
-      bet = 5;
+      bet = HandEvaluator.MAX_BET;
       credits = 1000;
       dealt = false;
+      playerHand = new Hand();
+
    }
 
    void newHand()
@@ -23,15 +24,15 @@ class GuiGame
       deck = new Deck(true);
       playerHand.resetHand();
       credits -= bet;
+      //resets all hold states to false;
       Arrays.fill(playerHand.switchCard, true);
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
-         //playerHand.switchCard[k] = true;
          try
          {
             playerHand.takeCard(deck.dealCard());
          }
-         catch (OutOfCardsException e)
+         catch (EmptyDeck e)
          {
             System.out.println(e.getMessage());
          }
@@ -49,7 +50,7 @@ class GuiGame
             {
                playerHand.replaceCard(k, deck.dealCard());
             }
-            catch(OutOfCardsException e)
+            catch(EmptyDeck e)
             {
                System.out.println(e.getMessage());
             }
@@ -58,23 +59,23 @@ class GuiGame
       }
    }
 
-   public int evaluateHand()
+   String getHandVal()
+   {
+      return HandEvaluator.getHandVal(playerHand).toString();
+   }
+
+   int evaluateHand()
    {
       int creditsWon = HandEvaluator.getHandVal(playerHand).winVal(bet);
       credits += creditsWon;
       return creditsWon;
    }
 
-   public String getHandVal()
-   {
-      return HandEvaluator.getHandVal(playerHand).toString();
-   }
+   int getCredits(){ return credits; }
 
-   public int getCredits(){ return credits; }
+   int getBet(){ return bet; }
 
-   public int getBet(){ return bet; }
-
-   public void setBet(int bet)
+   void setBet(int bet)
    {
       if ( bet >= HandEvaluator.MIN_BET && bet <= HandEvaluator.MAX_BET)
       {
@@ -82,8 +83,19 @@ class GuiGame
       }
    }
 
+   static Hand getStartHand()
+   {
+      Hand royal = new Hand();
+      royal.takeCard(new Card(Card.Rank.ten,Card.Suit.spades));
+      royal.takeCard(new Card(Card.Rank.jack,Card.Suit.spades));
+      royal.takeCard(new Card(Card.Rank.queen,Card.Suit.spades));
+      royal.takeCard(new Card(Card.Rank.king,Card.Suit.spades));
+      royal.takeCard(new Card(Card.Rank.ace,Card.Suit.spades));
 
-   public boolean getDealt()
+      return royal;
+   }
+
+   boolean getDealt()
    {
       return dealt;
    }

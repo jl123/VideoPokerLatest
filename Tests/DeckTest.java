@@ -21,7 +21,7 @@ public class DeckTest
          {
             System.out.println(deck.dealCard());
          }
-         catch(OutOfCardsException e)
+         catch(EmptyDeck e)
          {
             System.out.println(e.getMessage());
          }

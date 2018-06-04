@@ -56,10 +56,4 @@ class Card implements Comparable<Card>
          return this.suit.ordinal() - other.suit.ordinal();
       return this.rank.value - other.rank.value;
    }
-
-   public static void main(String[] args)
-   {
-      Card test = new Card(Rank.ten, Suit.diamonds);
-      System.out.println(test.toString());
-   }
 }

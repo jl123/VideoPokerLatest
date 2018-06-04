@@ -23,11 +23,11 @@ class Deck
       }
    }
    //deal
-   Card dealCard() throws OutOfCardsException
+   Card dealCard() throws EmptyDeck
    {
       if (theCards.size() > 0)
          return theCards.pop();
-      throw new OutOfCardsException();
+      throw new EmptyDeck();
    }
 
    //
@@ -58,7 +58,7 @@ class Deck
    
 }
 
-class OutOfCardsException extends Exception
+class EmptyDeck extends Exception
 {
-   OutOfCardsException(){ super("Deck is empty."); }
+   EmptyDeck(){ super("Deck is empty."); }
 }

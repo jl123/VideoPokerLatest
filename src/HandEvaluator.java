@@ -143,6 +143,10 @@ class HandEvaluator
                return "4 OF A KIND";
             case fullHouse:
                return "FULL HOUSE";
+            case flush:
+               return "FLUSH";
+            case straight:
+               return "STRAIGHT";
             case set:
                return "3 OF A KIND";
             case twoPair:
@@ -159,7 +163,6 @@ class HandEvaluator
    static handVal getHandVal(Hand hand)
    {
       sortedHand = new LinkedList<>();
-      //sortedHand.clear();
       sortHand(hand);
 
       if ( isRoyalFlush(sortedHand) )
@@ -304,7 +307,7 @@ class HandEvaluator
             hand.stream().collect(Collectors.groupingBy(Card::getRank));
       int numPairs = 0;
 
-      for (Card.Rank rank: collect.keySet())
+      for (Card.Rank rank : collect.keySet())
       {
          if (collect.get(rank).size() == 2)
          {
@@ -312,11 +315,6 @@ class HandEvaluator
          }
       }
       return numPairs == 1;
-   }
-
-   static boolean pairAnalyzer(LinkedList<Card> hand, int card1, int card2)
-   {
-      return hand.get(card1).getRank() == hand.get(card2).getRank();
    }
 
    static void insert(LinkedList<Card> cardList, Card card)
@@ -349,7 +347,7 @@ class HandEvaluator
          if (card.compareTo(iterator.next()) == 0 )
          {
             iterator.remove();
-            return true;   // we found, we removed, we return
+            return true;
          }
       }
       return false;

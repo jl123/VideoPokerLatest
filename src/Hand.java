@@ -59,7 +59,7 @@ class Hand
             try
             {
                tempCard = deck.dealCard();
-            } catch (OutOfCardsException e)
+            } catch (EmptyDeck e)
             {
                System.out.println(e.getMessage());
             }

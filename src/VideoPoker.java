@@ -52,7 +52,7 @@ class VideoPoker
             {
                playerHand.takeCard(theDeck.dealCard());
             }
-            catch (OutOfCardsException e)
+            catch (EmptyDeck e)
             {
                System.out.println(e.getMessage());
             }
