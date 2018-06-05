@@ -10,10 +10,8 @@ class Deck
    {
       theCards = new Stack<>();
       
-      for (Card.Suit suit : Card.Suit.values())
-      {
-         for (Card.Rank rank : Card.Rank.values())
-         {
+      for (Card.Suit suit : Card.Suit.values()) {
+         for (Card.Rank rank : Card.Rank.values()) {
             theCards.push(new Card(rank, suit));
          }
       }
@@ -23,11 +21,11 @@ class Deck
       }
    }
    //deal
-   Card dealCard() throws EmptyDeck
+   Card dealCard() throws EmptyDeckException
    {
       if (theCards.size() > 0)
          return theCards.pop();
-      throw new EmptyDeck();
+      throw new EmptyDeckException();
    }
 
    //
@@ -58,7 +56,7 @@ class Deck
    
 }
 
-class EmptyDeck extends Exception
+class EmptyDeckException extends Exception
 {
-   EmptyDeck(){ super("Deck is empty."); }
+   EmptyDeckException(){ super("Deck is empty."); }
 }

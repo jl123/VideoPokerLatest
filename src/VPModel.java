@@ -2,7 +2,6 @@ import java.util.Arrays;
 
 class VPModel
 {
-   final public int MAX_BET = 5;
    private int bet;
    private int credits;
    private Deck deck;
@@ -32,7 +31,7 @@ class VPModel
          {
             playerHand.takeCard(deck.dealCard());
          }
-         catch (EmptyDeck e)
+         catch (EmptyDeckException e)
          {
             System.out.println(e.getMessage());
          }
@@ -50,7 +49,7 @@ class VPModel
             {
                playerHand.replaceCard(k, deck.dealCard());
             }
-            catch(EmptyDeck e)
+            catch(EmptyDeckException e)
             {
                System.out.println(e.getMessage());
             }

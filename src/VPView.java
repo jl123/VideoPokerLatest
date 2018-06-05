@@ -12,6 +12,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -20,7 +22,6 @@ import javafx.stage.Stage;
 public class VPView extends Application {
 
    private static VPController controller;
-   private static VPModel game;
    static GridPane grid;
    static ImageView[] cardImages;
    static ImageView[] holdView;
@@ -35,7 +36,7 @@ public class VPView extends Application {
 
    public static void main(String[] args)
    {
-      game = new VPModel();
+      VPModel game = new VPModel();
       controller = new VPController(game);
       launch(args);
    }
@@ -131,6 +132,7 @@ public class VPView extends Application {
       controller.startGame();
    }
 
+
    static class CreditEventsHandler implements EventHandler<ActionEvent>
    {
       final int betAmount;
@@ -162,6 +164,10 @@ public class VPView extends Application {
       public void handle(ActionEvent event)
       {
          controller.processHold(cardNum);
+
+         MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass()
+               .getResource("sound_hold.wav").toExternalForm()));
+         mediaPlayer.play();
       }
    }
 }

@@ -1,6 +1,5 @@
 import javafx.geometry.HPos;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -24,6 +23,8 @@ class VPController
       {
          VPView.cardImg = new Image(CardImageUtils.getImage(startHand.inspectCard(k)));
          VPView.cardImages[k].setImage(VPView.cardImg);
+         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
+         VPView.cardImages[k].setPreserveRatio(true);
          VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
          VPView.grid.add(VPView.betAmount[k], k, 2);
       }
@@ -44,7 +45,6 @@ class VPController
    }
    void processDraw()
    {
-      Image image1;
       int amountWon;
       game.draw();
       for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -52,10 +52,11 @@ class VPController
 
          game.playerHand.switchCard[k] = false;
          VPView.grid.add(VPView.betAmount[k], k, 2);
-         image1 = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-         VPView.cardImages[k].setFitHeight(image1.getHeight() * 2.0);
+         VPView.cardImg = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+         VPView.cardImages[k].setImage(VPView.cardImg);
+         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
          VPView.cardImages[k].setPreserveRatio(true);
-         VPView.cardButton[k].setGraphic(new ImageView(image1));
+         VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
          VPView.grid.getChildren().remove(VPView.holdView[k]);
       }
       VPView.grid.getChildren().remove(VPView.drawButton);
@@ -64,14 +65,13 @@ class VPController
       {
          VPView.amountWonLabel.setText("YOU WON: " + amountWon);
 
-         String audio = "sound_win.wav";
-         Media sound = new Media(getClass().getResource(audio).toExternalForm());
-         MediaPlayer mediaPlayer = new MediaPlayer(sound);
+         MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass()
+               .getResource("sound_win.wav").toExternalForm()));
          mediaPlayer.play();
       }
       try
       {
-         sleep(300);
+         sleep(500);
       }
       catch (InterruptedException e)
       {
@@ -93,32 +93,35 @@ class VPController
 
    void processPlay()
    {
-
       game.newHand();
       VPView.creditsLabel.setText("CREDITS: " + game.getCredits() + "\n\n\n");
       VPView.amountWonLabel.setText("");
       VPView.handRankLabel.setText("");
+      try
+      {
+         sleep(500);
+      } catch (InterruptedException e)
+      {
+         e.printStackTrace();
+      }
       VPView.grid.add(VPView.drawButton, 5, 2);
       VPView.grid.getChildren().remove(VPView.play);
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
          VPView.grid.getChildren().remove(VPView.betAmount[k]);
          VPView.grid.getChildren().remove(VPView.holdView[k]);
-         Image img = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-         VPView.cardButton[k].setGraphic(new javafx.scene.image.ImageView(img));
-
+         VPView.cardImg = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
+         VPView.cardImages[k].setImage(VPView.cardImg);
+         VPView.cardImages[k].setImage(VPView.cardImg);
+         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
+         VPView.cardImages[k].setPreserveRatio(true);
+         VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
       }
    }
 
-   void setBet(int bet)
-   {
-      game.setBet(bet);
-   }
+   void setBet(int bet) { game.setBet(bet); }
 
-   int getBet()
-   {
-      return game.getBet();
-   }
+   int getBet() { return game.getBet(); }
 
    int getCredits() { return game.getCredits(); }
 }
