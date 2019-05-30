@@ -1,10 +1,16 @@
+import Deck.Deck;
+import Deck.EmptyDeckException;
+import Hand.Hand;
+import Hand.HandEvaluator;
+
 import java.util.*;
 
-class VideoPoker
+class CommandLineMain
 {
    public static void main (String[] args)
    {
       final boolean shuffle = true;
+
       Deck theDeck;
       String bet;
       int betInt = 5;
@@ -28,24 +34,25 @@ class VideoPoker
 
          do
          {
-            System.out.println("\nHit ENTER to continue with current bet amount, or enter amount (1-5) to change bet amount, or 'X' to exit, then press ENTER to play:");
+            System.out.println("\nHit ENTER to continue with current bet " +
+                  "amount, or enter amount (1-5) to change bet amount, or " +
+                  "'X' to exit, then press ENTER to playDrawButton:");
             try
             {
                      bet = gameScanner.nextLine();
                      if ( bet.equals("X") || bet.equals("x"))
                         System.exit(0);
-                     else if(bet.isEmpty())
-                        break;
-                     else
+                     else if (!bet.isEmpty())
                         betInt = Integer.parseInt(bet);
 
             } catch (NumberFormatException e)
             {
-               System.out.println("Enter a card value between 1 and 5, then press ENTER to HOLD it. "
-                     + "Press ENTER again when ready to draw.");
+               System.out.println("Enter a card value between 1 and 5, then " +
+                     "press ENTER to HOLD it. Press ENTER again when ready " +
+                     "to draw.");
             }
          } while (betInt < 1 || betInt > 5);
-         credits = credits - betInt;
+         credits -= betInt;
          for (int k = 0; k < Hand.MAX_CARDS; k++)
          {
             try
@@ -56,11 +63,12 @@ class VideoPoker
             {
                System.out.println(e.getMessage());
             }
-            System.out.println("Card " + (k + 1) + ": "
+            System.out.println("Deck.Card " + (k + 1) + ": "
                   + playerHand.inspectCard(k).toString());
          }
 
-         System.out.println("HAND VALUE: " + HandEvaluator.getHandVal(playerHand));
+         System.out.println("HAND VALUE: " +
+               HandEvaluator.getHandVal(playerHand));
          credits = credits + HandEvaluator.getHandVal(playerHand).winVal(betInt);
          System.out.println(playerHand.toString());
          String muckCard = "";
@@ -70,18 +78,20 @@ class VideoPoker
          {
             try
             {
-               System.out.println("Choose a card to discard (1-5) and hit ENTER. HIT ENTER WITH NO NUMBER TO DRAW CARDS.");
+               System.out.println("Choose a card to keep/discard (1-5) and hit " +
+                     "ENTER. HIT ENTER WITH NO NUMBER TO DRAW CARDS.");
                muckCard = gameScanner.nextLine();
                if (!muckCard.isEmpty())
                   muckInt = Integer.parseInt(muckCard);
                muckInt--;
-               if ((muckInt >= 0 && muckInt < Hand.MAX_CARDS) && !muckCard.isEmpty())
+               if ((muckInt >= 0 && muckInt < Hand.MAX_CARDS) &&
+                     !muckCard.isEmpty())
                {
-                  playerHand.switchCard[muckInt] = !playerHand.switchCard[muckInt];
+                  playerHand.setSwitchCard(muckInt, !playerHand.getSwitchCard(muckInt));
                   for (int k = 0; k < Hand.MAX_CARDS; k++)
-                  System.out.println("Card " + (k + 1) + ": "
+                  System.out.println("Deck.Card " + (k + 1) + ": "
                         + playerHand.inspectCard(k).toString() + "   DISCARD: "
-                        + playerHand.switchCard[k]);
+                        + playerHand.getSwitchCard(k));
                }
                else if (!muckCard.isEmpty())
                {
@@ -89,14 +99,15 @@ class VideoPoker
                }
             } catch (NumberFormatException | NoCardException ex)
             {
-               System.out.println("Enter a card value between 1 and 5 to muck that "
-                     + "card or 6 to stand");
+               System.out.println("Enter a card value between 1 and 5 to " +
+                     "muck that card or 6 to stand");
             }
          } while ( !muckCard.isEmpty() );
 
          playerHand.draw(theDeck);
 
-         System.out.println("HAND VALUE: " + HandEvaluator.getHandVal(playerHand));
+         System.out.println("HAND VALUE: "
+               + HandEvaluator.getHandVal(playerHand));
          System.out.println(playerHand.toString());
          System.out.println("YOU WON: " +
                HandEvaluator.getHandVal(playerHand).winVal(betInt));

@@ -1,10 +1,14 @@
+package Hand;
+
+import Deck.Card;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-class HandEvaluator
+public class HandEvaluator
 {
-   static final int MIN_BET = 1;
-   static final int MAX_BET = 5;
+   public static final int MIN_BET = 1;
+   public static final int MAX_BET = 5;
 
    private static LinkedList<Card> sortedHand;
    
@@ -19,51 +23,47 @@ class HandEvaluator
    private static final int setWin = 3;
    private static final int twoPairWin = 2;
    private static final int pairWin = 1;
-   
+   private static Map<handVal, String> stringMap = Map.of(handVal.ROYAL_FLUSH, "ROYAL FLUSH");
 
-
-   static String oddsTable()
+   // FINISH FORMATTING
+   public static String oddsTable()
    {
 
-            return
-                  "Pay out table:\n" +
+      return String.format("Pay out table:\n" +
             "Bet:               1     2     3      4      5   \n" +
             "                 ------------------------------- \n" +
-            "Royal flush.....| 250 | 500 | 750 | 1000 | 4000 |\n" +
-            "Straight flush..| 50  | 100 | 150 | 200  | 250  |\n" +
+            "Royal FLUSH.....| 250 | 500 | 750 | 1000 | 4000 |\n" +
+            "Straight FLUSH..| 50  | 100 | 150 | 200  | 250  |\n" +
             "4 of a kind.....| 25  | 50  | 75  | 100  | 125  |\n" +
             "Full house......| 9   | 18  | 27  | 36   | 45   |\n" +
             "Flush...........| 6   | 12  | 18  | 24   | 30   |\n" +
             "Straight........| 4   | 8   | 12  | 16   | 20   |\n" +
             "3 of a kind.....| 3   | 6   | 9   | 12   | 15   |\n" +
             "2 pair..........| 2   | 4   | 6   | 8    | 10   |\n" +
-            "Jacks or better.| 1   | 2   | 3   | 4    | 5    |\n" +
-            "                 ------------------------------- ";
-
-
+            "Jacks or better.| %d   | %d   | 3   | 4    | 5    |\n" +
+            "                 ------------------------------- ",
+            pairWin, pairWin * 2);
    }
 
+
+
    public enum handVal{
-      royalFlush
+
+      ROYAL_FLUSH
             {
                @Override
                public int winVal(int betAmount)
                {
-                  if (betAmount == MAX_BET)
-                     return MAX_BET * royalFlushMaxWin;
-                  else
-                     return betAmount * royalFlushWin;
+                  return betAmount == MAX_BET ? MAX_BET * royalFlushMaxWin :
+                        betAmount * royalFlushWin;
                }
             },
-      straightFlush
+      STRAIGHT_FLUSH
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return betAmount * straightFlushWin;
-               }
+               public int winVal(int betAmount) { return betAmount * straightFlushWin; }
             },
-      quads
+      QUADS
             {
                @Override
                public int winVal(int betAmount)
@@ -71,15 +71,12 @@ class HandEvaluator
                   return betAmount * quadsWin;
                }
             },
-      fullHouse
+      FULL_HOUSE
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return betAmount * fullHouseWin;
-               }
+               public int winVal(int betAmount) { return betAmount * fullHouseWin; }
             },
-      flush
+      FLUSH
             {
                @Override
                public int winVal(int betAmount)
@@ -87,15 +84,12 @@ class HandEvaluator
                   return betAmount * flushWin;
                }
             },
-      straight
+      STRAIGHT
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return betAmount * straightWin;
-               }
+               public int winVal(int betAmount) { return betAmount * straightWin; }
             },
-      set
+      SET
             {
                @Override
                public int winVal(int betAmount)
@@ -103,56 +97,48 @@ class HandEvaluator
                   return betAmount * setWin;
                }
             },
-      twoPair
+      TWO_PAIR
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return betAmount * twoPairWin;
-               }
+               public int winVal(int betAmount) { return betAmount * twoPairWin; }
             },
-      highPair
+      HIGH_PAIR
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return betAmount * pairWin;
-               }
+               public int winVal(int betAmount) { return betAmount * pairWin; }
             },
-      loser
+      LOSER
             {
                @Override
-               public int winVal(int betAmount)
-               {
-                  return 0;
-               }
+               public int winVal(int betAmount) { return 0; }
             };
 
       public abstract int winVal(int betAmount);
 
+      //consider getting rid of this.....override toString above instead.
       @Override
       public String toString()
       {
          switch (this)
          {
-            case royalFlush:
+            case ROYAL_FLUSH:
                return "ROYAL FLUSH";
-            case straightFlush:
+            case STRAIGHT_FLUSH:
                return "STRAIGHT FLUSH";
-            case quads:
+            case QUADS:
                return "4 OF A KIND";
-            case fullHouse:
+            case FULL_HOUSE:
                return "FULL HOUSE";
-            case flush:
+            case FLUSH:
                return "FLUSH";
-            case straight:
+            case STRAIGHT:
                return "STRAIGHT";
-            case set:
+            case SET:
                return "3 OF A KIND";
-            case twoPair:
+            case TWO_PAIR:
                return "TWO PAIR";
-            case highPair:
-               return "HIGH PAIR";
+            case HIGH_PAIR:
+               return "JACKS OR BETTER";
             default:
                return "LOSER";
          }
@@ -160,32 +146,50 @@ class HandEvaluator
    }
 
 
-   static handVal getHandVal(Hand hand)
+   public static handVal getHandVal(Hand hand)
    {
       sortedHand = new LinkedList<>();
       sortHand(hand);
 
       if ( isRoyalFlush(sortedHand) )
-         return handVal.royalFlush;
-      if  ( isStraightFlush( sortedHand ) )
-         return handVal.straightFlush;
+      {
+         return handVal.ROYAL_FLUSH;
+      }
+      if  ( isStraightFlush( sortedHand ))
+      {
+         return handVal.STRAIGHT_FLUSH;
+      }
       if  (isQuads( sortedHand ) )
-         return handVal.quads;
+      {
+         return handVal.QUADS;
+      }
       if ( isFullHouse( sortedHand ) )
-         return handVal.fullHouse;
+      {
+         return handVal.FULL_HOUSE;
+      }
       if ( isFlush( sortedHand ) )
-         return handVal.flush;
+      {
+         return handVal.FLUSH;
+      }
       if ( isStraight( sortedHand ) )
-         return handVal.straight;
+      {
+         return handVal.STRAIGHT;
+      }
       if ( isSet( sortedHand ) )
-         return handVal.set;
+         return handVal.SET;
       if (isTwoPair( sortedHand ) )
-         return handVal.twoPair;
+      {
+         return handVal.TWO_PAIR;
+      }
       if (isPairJorHigher( sortedHand ) )
-         return handVal.highPair;
+      {
+         return handVal.HIGH_PAIR;
+      }
       if (isPair( sortedHand ))
-         return handVal.loser;
-      return handVal.loser;
+      {
+         return handVal.LOSER;
+      }
+      return handVal.LOSER;
       
    }
 
@@ -221,14 +225,15 @@ class HandEvaluator
             hand.get(1).getRank() == hand.get(4).getRank() );
    }
    
-   static boolean isFullHouse(List<Card> hand)
+   private static boolean isFullHouse(List<Card> hand)
    {
       return isPair(hand) && isSet(hand);
    }
 
    private static boolean isFlush(LinkedList<Card> hand)
    {
-      Map<Card.Suit, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getSuit));
+      Map<Card.Suit, List<Card>> collect =
+            hand.stream().collect(Collectors.groupingBy(Card::getSuit));
 
       for (Card.Suit suit: collect.keySet())
       {
@@ -256,10 +261,11 @@ class HandEvaluator
             hand.get(4).getRank() == Card.Rank.ace );
    }
    //incomplete--------get rid of .value?
-   static boolean isSet(List<Card> hand)
+   private static boolean isSet(List<Card> hand)
    {
 
-      Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
+      Map<Card.Rank, List<Card>> collect =
+            hand.stream().collect(Collectors.groupingBy(Card::getRank));
 
       for (Card.Rank rank: collect.keySet())
       {
@@ -273,7 +279,8 @@ class HandEvaluator
    //incomplete
    private static boolean isTwoPair(List<Card> hand)
    {
-      Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
+      Map<Card.Rank, List<Card>> collect =
+            hand.stream().collect(Collectors.groupingBy(Card::getRank));
       int numPairs = 0;
       for (Card.Rank rank: collect.keySet())
       {
@@ -287,7 +294,8 @@ class HandEvaluator
    //incomplete
    private static boolean isPairJorHigher(List<Card> hand)
    {
-      Map<Card.Rank, List<Card>> collect = hand.stream().collect(Collectors.groupingBy(Card::getRank));
+      Map<Card.Rank, List<Card>> collect =
+            hand.stream().collect(Collectors.groupingBy(Card::getRank));
       int numPairs = 0;
       int rankVal = 0;
 
@@ -317,7 +325,7 @@ class HandEvaluator
       return numPairs == 1;
    }
 
-   static void insert(LinkedList<Card> cardList, Card card)
+   private static void insert(LinkedList<Card> cardList, Card card)
    {
       ListIterator<Card> iterator;
       Card listX;
@@ -339,7 +347,7 @@ class HandEvaluator
    }
 
    //REMOVE
-   static boolean remove(LinkedList<Card> cardList, Card card)
+   private static boolean remove(LinkedList<Card> cardList, Card card)
    {
       ListIterator<Card> iterator;
       for (iterator = cardList.listIterator(); iterator.hasNext(); )

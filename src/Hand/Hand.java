@@ -1,55 +1,58 @@
-import java.util.LinkedList;
+package Hand;
+
+import Deck.Card;
+import Deck.Deck;
+import Deck.EmptyDeckException;
+import Deck.CardImageUtils;
+
+import java.util.*;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-class Hand
+public class Hand
 {
-   static final int MAX_CARDS = 5;
-   private final Card[] hand;
-   final List<Card> sortedHand;
+   public static final int MAX_CARDS = 5;
 
-   final boolean[] switchCard = new boolean[Hand.MAX_CARDS];
-   private int numCards = 0;
+   private final List<Card> hand;
+   private final List<Card> sortedHand;
+   private final boolean[] switchCard;
+
 
    //constructor
-   Hand()
+   public Hand()
    {
-      hand = new Card[MAX_CARDS];
+      hand = new java.util.ArrayList<>();
       sortedHand = new LinkedList<>();
-      for (int k = 0; k < Hand.MAX_CARDS; k++)
-      {
-         switchCard[k] = true;
-      }
+      switchCard = new boolean[Hand.MAX_CARDS];
       resetHand();
    }
 
-   void resetHand()
+   public void resetHand()
    {
-      for (int i = 0; i < MAX_CARDS; i++)
-      {
-         hand[i] = null;
-      }
-      numCards = 0;
+      hand.removeAll(hand);  //intentional remove all cards from hand
+      Arrays.fill(switchCard, true);
    }
 
-   void takeCard(Card card)
+   public void takeCard(Card card)
    {
-      hand[numCards] = card;
+      if (hand.size() == MAX_CARDS) { return; }
+
+      hand.add(card);
       insert(sortedHand, card);
-      numCards++;
    }
 
-   void replaceCard(int cardNum, Card newCard)
+   public void replaceCard(int cardNum, Card newCard)
    {
-      if (cardNum >= 0 && cardNum < numCards)
+      if (cardNum >= 0 && cardNum < hand.size())
       {
-         remove(sortedHand, hand[cardNum]);
-         hand[cardNum] = newCard;
+         sortedHand.remove(hand.get(cardNum));
+         hand.set(cardNum,newCard);
          insert(sortedHand, newCard);
       }
    }
 
-   void draw(Deck deck)
+   public void draw(Deck deck)
    {
       for (int k = 0; k < MAX_CARDS; k++)
       {
@@ -73,28 +76,29 @@ class Hand
    @Override
    public String toString()
    {
-      StringBuilder retStr = new StringBuilder("Hand = ( ");
-      for (int i = 0; i < numCards; i++)
+      ListIterator<Card> listIterator = hand.listIterator();
+      StringBuilder retStr = new StringBuilder("Hand.Hand = ( ");
+      do
       {
-         retStr.append(hand[i].toString());
-         if (i < numCards - 1)
-            retStr.append(", ");
-      }
+         retStr.append(listIterator.hasNext() ? listIterator.next().toString() + ", " : " )");
+      }while (listIterator.hasNext());
 
-      retStr.append(" )");
       return retStr.toString();
    }
 
-   //accessor for numCards
-   int getNumCards()
+
+   public ArrayList<String> cardImgStrList()
    {
-      return numCards;
+      return hand.stream().map(CardImageUtils::getImageStr).collect(Collectors.toCollection(ArrayList::new));
    }
 
-   Card inspectCard(int k)
+   //accessor for numCards
+   public int getNumCards()
    {
-      return hand[k];
+      return hand.size();
    }
+
+   public Card inspectCard(int k) { return hand.get(k); }
 
    //helper methods for LinkedList
    private static void insert(List<Card> cardList, Card card)
@@ -145,5 +149,16 @@ class Hand
          else shouldContinue = false;
       }
       return retFlag;
+   }
+
+   public boolean getSwitchCard(int i) throws IndexOutOfBoundsException
+   {
+         return switchCard[i];
+   }
+
+   public boolean setSwitchCard(int i, boolean setRemove)
+   {
+      switchCard[i] = setRemove;
+      return switchCard[i];
    }
 }

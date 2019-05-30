@@ -1,8 +1,6 @@
-import javafx.geometry.HPos;
-import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import Deck.CardImageUtils;
+
+import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -10,118 +8,113 @@ class VPController
 {
    private final VPModel game;
 
+   private final VPView view;
+   private static ArrayList<String> cardBacks;
 
-   VPController(VPModel game)
+   VPController(VPModel game, VPView view)
    {
       this.game = game;
+      this.view = view;
    }
 
-   void startGame()
-   {
-      Hand startHand = VPModel.getStartHand();
-      for (int k = 0; k < Hand.MAX_CARDS; k++)
-      {
-         VPView.cardImg = new Image(CardImageUtils.getImage(startHand.inspectCard(k)));
-         VPView.cardImages[k].setImage(VPView.cardImg);
-         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
-         VPView.cardImages[k].setPreserveRatio(true);
-         VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
-         VPView.grid.add(VPView.betAmount[k], k, 2);
-      }
-   }
 
-   void processHold(int cardNum)
+
+   public void dealDraw()
    {
-      game.playerHand.switchCard[cardNum] = !game.playerHand.switchCard[cardNum];
-      if (!game.playerHand.switchCard[cardNum] && game.getDealt())
+      if (game.getInGameStatus())
       {
-         VPView.grid.add(VPView.holdView[cardNum], cardNum, 0);
-         GridPane.setHalignment(VPView.holdView[cardNum], HPos.CENTER);
+         processDraw();
       }
       else
       {
-         VPView.grid.getChildren().remove(VPView.holdView[cardNum]);
+         processDeal();
       }
    }
-   void processDraw()
+
+   private void processDeal()
    {
-      int amountWon;
-      game.draw();
-      for (int k = 0; k < Hand.MAX_CARDS; k++)
-      {
-
-         game.playerHand.switchCard[k] = false;
-         VPView.grid.add(VPView.betAmount[k], k, 2);
-         VPView.cardImg = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-         VPView.cardImages[k].setImage(VPView.cardImg);
-         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
-         VPView.cardImages[k].setPreserveRatio(true);
-         VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
-         VPView.grid.getChildren().remove(VPView.holdView[k]);
-      }
-      VPView.grid.getChildren().remove(VPView.drawButton);
-      amountWon = game.evaluateHand();
-      if (amountWon > 0)
-      {
-         VPView.amountWonLabel.setText("YOU WON: " + amountWon);
-
-         MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass()
-               .getResource("sound_win.wav").toExternalForm()));
-         mediaPlayer.play();
-      }
-      try
-      {
-         sleep(500);
-      }
-      catch (InterruptedException e)
-      {
-         e.printStackTrace();
-      }
-      VPView.grid.add(VPView.play, 5, 2);
-      VPView.creditsLabel.setText("CREDITS: " + game.getCredits() + "\n\n\n");
-      if (!game.getHandVal().equals("LOSER"))
-      {
-         VPView.handRankLabel.setText(game.getHandVal());
-      }
-
-   }
-
-   public void processHand()
-   {
-
-   }
-
-   void processPlay()
-   {
+      view.resetTable();
+      int oldCredits = getCredits();
       game.newHand();
-      VPView.creditsLabel.setText("CREDITS: " + game.getCredits() + "\n\n\n");
-      VPView.amountWonLabel.setText("");
-      VPView.handRankLabel.setText("");
+      view.updateCredits(getCredits(), oldCredits, getMinBet(), null);
+      view.disableHoldButtons(false);
+      view.disableBetButtons(true);
+
       try
       {
-         sleep(500);
+         sleep(300);
       } catch (InterruptedException e)
       {
          e.printStackTrace();
       }
-      VPView.grid.add(VPView.drawButton, 5, 2);
-      VPView.grid.getChildren().remove(VPView.play);
-      for (int k = 0; k < Hand.MAX_CARDS; k++)
-      {
-         VPView.grid.getChildren().remove(VPView.betAmount[k]);
-         VPView.grid.getChildren().remove(VPView.holdView[k]);
-         VPView.cardImg = new Image(CardImageUtils.getImage(game.playerHand.inspectCard(k)));
-         VPView.cardImages[k].setImage(VPView.cardImg);
-         VPView.cardImages[k].setImage(VPView.cardImg);
-         VPView.cardImages[k].setFitHeight(VPView.cardImg.getHeight() * 1.25);
-         VPView.cardImages[k].setPreserveRatio(true);
-         VPView.cardButton[k].setGraphic(VPView.cardImages[k]);
-      }
+
+      view.updateCards(game.getHand());
+
    }
 
-   void setBet(int bet) { game.setBet(bet); }
+   private void processDraw()
+   {
+      int oldCredits = getCredits();
+      int won = game.draw();
+      view.updateWon(won, getMinBet());
+      view.updateCredits(getCredits(), oldCredits, getMinBet(), null);
+
+      view.disableHoldButtons(true);
+      view.disableBetButtons(false);
+      view.updateCards(game.getHand());
+
+      if (!getHandVal().equals("LOSER"))
+      {
+         view.handRankLabel.setText(getHandVal());
+      }
+      view.setGameOverLabel(true);
+   }
+
+   boolean processHold(int cardNum)
+   {
+      return game.holdCard(cardNum);
+   }
+
+   boolean incrementBet()
+   {
+      view.resetTable();
+      int oldCredits = getCredits();
+      if (game.incrementBet())
+      {
+         view.updateBet(game.getBet());
+         view.updateCredits(game.getCredits(), oldCredits, VPModel.MIN_BET, "aaa");
+         return true;
+      }
+      return false;
+   }
+
+   boolean maxBet()
+   {
+      boolean incremented = incrementBet();
+      while (incrementBet());
+      return incremented;
+   }
+
+   static int getMaxCards() { return VPModel.getMaxCards(); }
+   static int getMinBet() { return VPModel.MIN_BET; }
+   static int getMaxBet() { return VPModel.MAX_BET; }
+   static int getNumBets() { return  VPModel.NUM_BETS; }
+   boolean getInGameStatus() { return game.getInGameStatus(); }
+
+   static ArrayList<String> getCardBacks()
+   {
+      if (cardBacks == null)
+      {
+         System.out.println("ADFASDASDASDASDSA");
+         cardBacks = CardImageUtils.getCardBackImageStringList(VPController.getMaxCards());
+      }
+      return cardBacks;
+   }
 
    int getBet() { return game.getBet(); }
-
    int getCredits() { return game.getCredits(); }
+
+
+
+   protected String getHandVal() {  return game.getHandVal(); }
 }
