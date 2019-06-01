@@ -2,6 +2,7 @@ import Hand.Hand;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,8 +22,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
@@ -44,7 +44,7 @@ public class VPView extends Application
    private Button[] holdButton;
    private Button[] cardButton;
    private Label creditsLabel;
-   Label handRankLabel;
+   private Label handRankLabel;
    private  Label gameOverLabel;
    private Label betLabel;
    private Label amountWonLabel;
@@ -52,6 +52,7 @@ public class VPView extends Application
    private Button betPlusOne;
    private Button dealDrawButton;
    private boolean tableReset;
+   private GridWrap oddsGridWrap;
 
    public static void main(String[] args)
    {
@@ -110,7 +111,9 @@ public class VPView extends Application
       root.getChildren().add(infoGrid);
 
       //oddsGrid setup
-      oddsGrid = getOddsGrid();
+      oddsGridWrap = new GridWrap(controller.getWinTable());
+      oddsGrid = oddsGridWrap.getOddsGrid();
+
       root.getChildren().add(oddsGrid);
 
       //game over display
@@ -337,6 +340,7 @@ public class VPView extends Application
 
    void updateCredits(int credits, int oldCredits, int increment, String sound)
    {
+
       Task <Void> updateCreditsLabel = new Task<Void>() {
          @Override
          public Void call() throws Exception
@@ -377,6 +381,7 @@ public class VPView extends Application
 
    void updateBet(int bet)
    {
+      oddsGridWrap.highlightColumn(bet);
       Task<Void> updateBetLabel = new Task<Void>()
       {
          @Override
@@ -404,45 +409,6 @@ public class VPView extends Application
       threadCredits.start();
    }
 
-   private GridPane getOddsGrid()
-   {
-      oddsGrid = new GridPane();
-
-//      oddsGrid.setId("odds-grid");
-//      oddsGrid.getStyleClass().add("odds-grid");
-      oddsGrid.setAlignment(Pos.TOP_CENTER);
-//      StackPane.setAlignment(oddsGrid, Pos.TOP_CENTER);
-      //i is row
-      ArrayList<ArrayList<String>> gridVals = controller.getWinTable();
-      for (int i = 0; i < gridVals.size(); i++)
-      {
-         ArrayList<String> addList = gridVals.get(i);
-         int row = i;
-
-         for (int j = 0; j < addList.size(); j++)
-         {
-            int column = j;
-            Pane pane = new Pane();
-
-            oddsGrid.add(pane,column,row);
-            Label gridLab = new Label(addList.get(column));
-            pane.getChildren().add(gridLab);
-            gridLab.setId("win-table-text");
-            String addProp = column == 0 ? "wintable-handvals" : "wintable-win";
-            gridLab.getStyleClass().add(addProp);
-            pane.getStyleClass().add("odds-grid-cell");
-            if (row == 0)
-            {
-               pane.getStyleClass().add("first-row");
-            }
-            if (row == gridVals.size() - 1)
-            {
-               pane.getStyleClass().add("last-row");
-            }
-         }
-      }
-      return oddsGrid;
-   }
 
    private void animateFadeBlink(Label label)
    {
@@ -453,5 +419,93 @@ public class VPView extends Application
       fadeTransition.setAutoReverse(true);
       fadeTransition.setCycleCount(Animation.INDEFINITE);
       fadeTransition.play();
+   }
+
+   private class GridWrap
+   {
+      private GridPane oddsGrid;
+      private Map<Integer, List<Pane>> columnContents;
+      private List<Pane> highlightedColumn;
+      private List<ObservableList<String>> oldCss;
+
+      public GridWrap(ArrayList<ArrayList<String>> gridContent)
+      {
+         oddsGrid = gridBuilder(gridContent);
+      }
+
+      private GridPane gridBuilder(ArrayList<ArrayList<String>> gridContent)
+      {
+         oddsGrid = new GridPane();
+
+         //oddsGrid.setId("odds-grid");
+//      oddsGrid.getStyleClass().add("odds-grid");
+         oddsGrid.setAlignment(Pos.TOP_CENTER);
+//      StackPane.setAlignment(oddsGrid, Pos.TOP_CENTER);
+         //i is row
+         ArrayList<ArrayList<String>> gridVals = controller.getWinTable();
+         columnContents = new HashMap<>();
+
+         for (int n = 0; n < gridVals.size(); n++)
+         {
+            columnContents.put(n, new ArrayList<>());
+         }
+
+         System.out.println(columnContents.keySet());
+         //i = row
+         for (int i = 0; i < gridVals.size(); i++)
+         {
+            ArrayList<String> addList = gridVals.get(i);
+            int row = i;
+            //j = column
+            for (int j = 0; j < addList.size(); j++)
+            {
+               int column = j;
+               Pane pane = new Pane();
+               columnContents.get(column).add(pane);
+               oddsGrid.add(pane, column, row);
+               Label gridLab = new Label(addList.get(column));
+               pane.getChildren().add(gridLab);
+               gridLab.setId("win-table-text");
+               String addProp = column == 0 ? "wintable-handvals" : "wintable-win";
+               gridLab.getStyleClass().add(addProp);
+               paneCSS(pane, row, gridVals.size());
+            }
+         }
+
+         return oddsGrid;
+      }
+
+      private void paneCSS(Pane pane, int row, int height)
+      {
+         pane.getStyleClass().add("odds-grid-cell");
+         if (row == 0)
+         {
+            pane.getStyleClass().add("first-row");
+         }
+         if (row == height -1)
+         {
+            pane.getStyleClass().add("last-row");
+         }
+      }
+
+      public void highlightColumn(int column)
+      {
+         if (highlightedColumn != null)
+         {
+            for (int i = 0; i < highlightedColumn.size(); i++)
+            {
+               highlightedColumn.get(i).getStyleClass().clear();
+               paneCSS(highlightedColumn.get(i), i, highlightedColumn.size());
+            }
+         }
+         highlightedColumn = columnContents.get(column);
+         oldCss = new ArrayList<>();
+         for (Pane thisPane : columnContents.get(column))
+         {
+            thisPane.getStyleClass().add("select");
+         }
+      }
+
+      public GridPane getOddsGrid() {return oddsGrid; }
    }
 }

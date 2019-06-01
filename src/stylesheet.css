@@ -94,3 +94,7 @@
 .odds-grid-cell.last-row {
     -fx-background-insets: 0, 0 2 2 2;
 }
+
+.odds-grid-cell.select{
+    -fx-background-color: yellow, red;
+}
