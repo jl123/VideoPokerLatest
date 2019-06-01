@@ -1,7 +1,7 @@
 .root {
-    -fx-padding: 20 ;
-    cell-color: white ;
-    cell-border-color: yellow ;
+    -fx-background-color: blue;
+    -fx-text-fill: white;
+    -fx-padding: 20px ;
 }
 
 .label {
@@ -10,11 +10,18 @@
     -fx-text-weight: bold;
 }
 
+#info-label{
+    -fx-text-fill: white;
+}
+
 #end-game {
+
     -fx-font: 53px Tahoma;
     -fx-text-fill: red;
-    -fx-background-color: darkblue;
-    z-index: 999;
+    -fx-background-color: blue;
+    -fx-border-width: 5;
+    z-index: -1;
+    position: relative;
 }
 
 #end-game .text {
@@ -27,14 +34,6 @@
 
 }
 
-.fadeTransition {
-    -fx-animated: true;
-    /*-fx-anima;*/
-    /*fadeTransition.setFromValue(100);*/
-    /*fadeTransition.setToValue(0);*/
-    /*fadeTransition.setByValue(0.0);*/
-    /*fadeTransition.setCycleCount(Animation.INDEFINITE);*/
-}
 
 #invis-button {
     -fx-focus-color: transparent;
@@ -42,10 +41,6 @@
     -fx-end-margin: 3;
     -fx-start-margin: 3;
     -fx-alignment: center;
-    /*-fx-border-color: transparent;*/
-    /*-fx-border-width: 0;*/
-    /*-fx-background-radius: 0;*/
-    /*-fx-background-color: transparent;*/
 }
 
 #bet-button {
@@ -58,33 +53,44 @@
 }
 
 
-#odds-grid .grid {
-    /* 1 pixel border around the top and right of the grid: */
-    -fx-background-color: cell-border-color, cell-color ;
-    -fx-background-insets: 0, 1 1 0 0 ;
-    -fx-padding: 1 ;
-    -fx-alternative-column-fill-visible: pink ;
+#odds-grid {
+
+}
+
+
+#odds-grid .text {
+
+}
+
+#win-table-text {
+    -fx-label-padding: 3 40 3 3 ;
+}
+
+.wintable-win {
+    -fx-text-fill: white ;
+
+}
+
+.wintable-handvals {
+    -fx-text-fill: yellow;
+
 }
 
 #odds-grid {
-    /* 1 pixel border around the left and bottom of each cell: */
-    -fx-background-color: pink;
-    -fx-background-insets: 0, 0 0 1 1 ;
+    -fx-font: 15px Verdana;
+    -fx-background-color: red;
+    -fx-border-insets: 3 10 3 3 ;
 }
 
-#invisible {
-    visibility: hidden;
+.odds-grid-cell {
+    -fx-background-color: yellow, darkblue;
+    -fx-background-insets: 0, 0 2 0 2 ;
 }
 
-#odds-text {
-    -fx-text-alignment: center;
-    -fx-alignment: center;
-    -fx-font: 12px Verdana;
-    -fx-start-margin: 5;
-    -fx-end-margin: 5;
+.odds-grid-cell.first-row {
+    -fx-background-insets: 0, 2 2 0 2 ;
 }
 
-#odds-hands {
-    -fx-text-fill: yellow;
-    -fx-font: 12px Verdana;
+.odds-grid-cell.last-row {
+    -fx-background-insets: 0, 0 2 2 2;
 }

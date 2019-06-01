@@ -14,10 +14,8 @@ class VPController
    VPController(VPModel game, VPView view)
    {
       this.game = game;
-      this.view = view;
+      this.view = view;;
    }
-
-
 
    public void dealDraw()
    {
@@ -35,20 +33,22 @@ class VPController
    {
       view.resetTable();
       int oldCredits = getCredits();
-      game.newHand();
-      view.updateCredits(getCredits(), oldCredits, getMinBet(), null);
-      view.disableHoldButtons(false);
-      view.disableBetButtons(true);
+      if (game.newHand())
+      {
+         view.updateCredits(getCredits(), oldCredits, getMinBet(), null);
+         view.disableHoldButtons(false);
+         view.disableBetButtons(true);
 
-      try
-      {
-         sleep(300);
-      } catch (InterruptedException e)
-      {
-         e.printStackTrace();
+         try
+         {
+            sleep(300);
+         } catch (InterruptedException e)
+         {
+            e.printStackTrace();
+         }
+
+         view.updateCards(game.getHand());
       }
-
-      view.updateCards(game.getHand());
 
    }
 
@@ -63,11 +63,8 @@ class VPController
       view.disableBetButtons(false);
       view.updateCards(game.getHand());
 
-      if (!getHandVal().equals("LOSER"))
-      {
-         view.handRankLabel.setText(getHandVal());
-      }
-      view.setGameOverLabel(true);
+
+      view.endGameLabelsOn(getHandVal());
    }
 
    boolean processHold(int cardNum)
@@ -91,7 +88,10 @@ class VPController
    boolean maxBet()
    {
       boolean incremented = incrementBet();
-      while (incrementBet());
+      while (true)
+      {
+         if (!incrementBet()) break;
+      }
       return incremented;
    }
 
@@ -99,22 +99,22 @@ class VPController
    static int getMinBet() { return VPModel.MIN_BET; }
    static int getMaxBet() { return VPModel.MAX_BET; }
    static int getNumBets() { return  VPModel.NUM_BETS; }
+
    boolean getInGameStatus() { return game.getInGameStatus(); }
-
-   static ArrayList<String> getCardBacks()
-   {
-      if (cardBacks == null)
-      {
-         System.out.println("ADFASDASDASDASDSA");
-         cardBacks = CardImageUtils.getCardBackImageStringList(VPController.getMaxCards());
-      }
-      return cardBacks;
-   }
-
    int getBet() { return game.getBet(); }
    int getCredits() { return game.getCredits(); }
 
 
+   static ArrayList<String> getCardBacks()
+   {
+      cardBacks = cardBacks == null ?
+            CardImageUtils.getCardBackImageStringList(VPController.getMaxCards()) : cardBacks;
+      return  cardBacks;
+   }
+   protected ArrayList<ArrayList<String>> getWinTable()
+   {
+      return game.getWinValList();
+   }
 
-   protected String getHandVal() {  return game.getHandVal(); }
+   protected String getHandVal() {  return game.getHandValStr(); }
 }

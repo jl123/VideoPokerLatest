@@ -1,5 +1,4 @@
 import Hand.Hand;
-import Hand.HandEvaluator.handVal;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
@@ -15,10 +14,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -65,18 +64,9 @@ public class VPView extends Application
       tableReset = false;
 
       root = new StackPane();
-      root.setStyle("-fx-background: darkblue;");
-
       cardGrid = new GridPane();
-      cardGrid.setGridLinesVisible(false); // for testing
       cardGrid.setPadding(new Insets(230, BUTTON_W + BUTTON_PADDING * 2, 0, 0));
       cardGrid.setAlignment(Pos.CENTER);
-
-      oddsGrid = getWinGrid();
-      oddsGrid.setGridLinesVisible(false); // for testing
-      oddsGrid.setAlignment(Pos.TOP_CENTER);
-      StackPane.setAlignment(oddsGrid, Pos.TOP_CENTER);
-      root.getChildren().add(oddsGrid);
 
       controller = new VPController(new VPModel(), this);
 
@@ -113,21 +103,29 @@ public class VPView extends Application
       amountWonLabel.setId("info-label");
       amountWonLabel.setPadding(new Insets(20,6,6,6));
 
-      GridPane infoLabels = new GridPane();
-      infoLabels.add(creditsLabel,0,0);
-      infoLabels.add(betLabel, 0, 1);
-      infoLabels.setAlignment(Pos.BOTTOM_LEFT);
-      root.getChildren().add(infoLabels);
-      //hand rank display
-      handRankLabel = new Label("");
-      handRankLabel.setId("end-game");
+      GridPane infoGrid = new GridPane();
+      infoGrid.add(creditsLabel,0,0);
+      infoGrid.add(betLabel, 0, 1);
+      infoGrid.setAlignment(Pos.BOTTOM_LEFT);
+      root.getChildren().add(infoGrid);
+
+      //oddsGrid setup
+      oddsGrid = getOddsGrid();
+      root.getChildren().add(oddsGrid);
 
       //game over display
       gameOverLabel = new Label("GAME OVER");
-      setGameOverLabel(false);
-
-      gameOverLabel.setId("end-game");
       animateFadeBlink(gameOverLabel);
+      gameOverLabel.setId("end-game");
+      root.getChildren().add(gameOverLabel);
+
+
+      //hand rank display
+      handRankLabel = new Label("");
+      root.getChildren().add(handRankLabel);
+      handRankLabel.setId("end-game");
+      endGameLabelsOff();
+
 
       // add nodes to root
 //      root.getChildren().add(creditsLabel);
@@ -138,7 +136,6 @@ public class VPView extends Application
       StackPane.setAlignment(betLabel, Pos.BOTTOM_LEFT);
       StackPane.setMargin(betLabel, new Insets(0, 0, LABEL_PADDING, LABEL_PADDING));
 
-      root.getChildren().add(handRankLabel);
       StackPane.setAlignment(handRankLabel, Pos.BOTTOM_CENTER);
       StackPane.setMargin(handRankLabel, new Insets(0, 50 + BUTTON_PADDING * 2, LABEL_PADDING * 2, 0));
 
@@ -181,11 +178,9 @@ public class VPView extends Application
    protected void resetTable()
    {
       if (tableReset || controller.getInGameStatus()) {
-         System.out.println("adasdadasdsa");
          return; }
 
-      setGameOverLabel(false);
-      handRankLabel.setVisible(false);
+      endGameLabelsOff();
       disableHoldButtons(true);
       updateCards(VPController.getCardBacks());
 
@@ -193,26 +188,22 @@ public class VPView extends Application
 
    }
 
-   private void animateFadeBlink(Label label)
+   void endGameLabelsOn(String message)
    {
-      FadeTransition fadeTransition = new FadeTransition(Duration.seconds(3), label);
-      fadeTransition.setFromValue(100);
-      fadeTransition.setToValue(0);
-      fadeTransition.setByValue(0.0);
-      fadeTransition.setCycleCount(Animation.INDEFINITE);
+      gameOverLabel.setVisible(true);
+      gameOverLabel.toFront();
+
+      if (!message.equals(""))
+      {
+         handRankLabel.setText(message);
+         handRankLabel.setVisible(true);
+      }
    }
 
-
-   void setGameOverLabel(boolean setVisible)
+   void endGameLabelsOff()
    {
-      if (setVisible)
-      {
-         root.getChildren().add(gameOverLabel);
-      }
-      else
-      {
-         root.getChildren().remove(gameOverLabel);
-      }
+      gameOverLabel.setVisible(false);
+      handRankLabel.setVisible(false);
    }
 
    private void createHoldIcons()
@@ -258,10 +249,8 @@ public class VPView extends Application
          cardImages[k].setFitHeight(cardImg.getHeight() * sizeMult);
          cardImages[k].setImage(cardImg);
          cardImages[k].setPreserveRatio(true);
-         //cardButton[k].setStyle("-fx-opacity: 1;");
          cardButton[k].setMinSize(cardImg.getWidth() * sizeMult, cardImg.getHeight() * sizeMult);
          cardButton[k].toFront();
-//         cardGrid.getChildren().remove(holdButton[k]);
       }
    }
 
@@ -364,7 +353,6 @@ public class VPView extends Application
 
                if (credits >= oldCredits)
                {
-                  System.out.println("cred " + credits + " old cred " + oldCredits);
                   new MediaPlayer(new Media(getClass()
                         .getResource("sound_win.wav").toExternalForm())).play();
                }
@@ -394,7 +382,6 @@ public class VPView extends Application
          @Override
          public Void call() throws Exception
          {
-            System.out.println("in loop " + bet);
             updateMessage("WAGER: " + bet + "\n");
 
             new MediaPlayer(new Media(getClass()
@@ -417,34 +404,54 @@ public class VPView extends Application
       threadCredits.start();
    }
 
-   private static GridPane getWinGrid()
+   private GridPane getOddsGrid()
    {
+      oddsGrid = new GridPane();
 
-      GridPane oddsGrid = new GridPane();
-
-      for (handVal hVal : handVal.values())
+//      oddsGrid.setId("odds-grid");
+//      oddsGrid.getStyleClass().add("odds-grid");
+      oddsGrid.setAlignment(Pos.TOP_CENTER);
+//      StackPane.setAlignment(oddsGrid, Pos.TOP_CENTER);
+      //i is row
+      ArrayList<ArrayList<String>> gridVals = controller.getWinTable();
+      for (int i = 0; i < gridVals.size(); i++)
       {
-         if (hVal == handVal.LOSER) { break; }
+         ArrayList<String> addList = gridVals.get(i);
+         int row = i;
 
-         int row = hVal.ordinal();
-         int column = 0;
-         Label gridLab = new Label(hVal.toString());
-         gridLab.setId("odds-hands");
-         gridLab.setPadding(new Insets(10, 10, 0, 0));
-         oddsGrid.add(gridLab,column++,row);
-
-         for (int i = 1; i <= VPController.getNumBets(); i++)
+         for (int j = 0; j < addList.size(); j++)
          {
-            gridLab = new Label(String.valueOf(hVal.winVal(i * VPController.getMinBet())));
-            gridLab.setPadding(new Insets(15,15,0,0));
-            gridLab.setTextAlignment(TextAlignment.CENTER);
-            gridLab.setId("odds-text");
-            oddsGrid.add(gridLab,column++,row);
+            int column = j;
+            Pane pane = new Pane();
+
+            oddsGrid.add(pane,column,row);
+            Label gridLab = new Label(addList.get(column));
+            pane.getChildren().add(gridLab);
+            gridLab.setId("win-table-text");
+            String addProp = column == 0 ? "wintable-handvals" : "wintable-win";
+            gridLab.getStyleClass().add(addProp);
+            pane.getStyleClass().add("odds-grid-cell");
+            if (row == 0)
+            {
+               pane.getStyleClass().add("first-row");
+            }
+            if (row == gridVals.size() - 1)
+            {
+               pane.getStyleClass().add("last-row");
+            }
          }
       }
-      oddsGrid.setGridLinesVisible(true);
-
       return oddsGrid;
    }
 
+   private void animateFadeBlink(Label label)
+   {
+      FadeTransition fadeTransition = new FadeTransition(Duration.seconds(2), label);
+      fadeTransition.setFromValue(100);
+      fadeTransition.setToValue(0);
+      fadeTransition.setByValue(0.0);
+      fadeTransition.setAutoReverse(true);
+      fadeTransition.setCycleCount(Animation.INDEFINITE);
+      fadeTransition.play();
+   }
 }

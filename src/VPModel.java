@@ -6,7 +6,6 @@ import Hand.HandEvaluator;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class VPModel
@@ -32,7 +31,7 @@ class VPModel
       playerHand = new Hand();
    }
 /////////////////////////////////////////NEED TO ADD CHECK TO SEE IF CREDITS ALREADY DEDUCTED WHEN PLAY PUSHED
-   void newHand()
+   boolean newHand()
    {
       inGame = true;
 
@@ -41,6 +40,7 @@ class VPModel
       playerHand.resetHand();
       if (!usedIncrement)
       {
+
          if (bet <= credits)
          {
             credits -= bet;
@@ -50,7 +50,12 @@ class VPModel
             credits = 0;
          }
       }
-      usedIncrement = false;
+
+      if (bet == 0)
+      {
+         inGame = false;
+         return false;
+      }
       //resets all hold states to false;
 
       for (int k = 0; k < Hand.MAX_CARDS; k++)
@@ -64,10 +69,13 @@ class VPModel
             System.out.println(e.getMessage());
          }
       }
+      return true;
    }
 
    int draw()
    {
+      if (!inGame) {return 0;}
+
       for (int k = 0; k < Hand.MAX_CARDS; k++)
       {
          if (playerHand.getSwitchCard(k))
@@ -83,14 +91,17 @@ class VPModel
             }
          }
       }
-      int won = inGame ? evaluateHand() : 0;
+
+      int won = evaluateHand();
       inGame = false;
+      usedIncrement = false;
       return won;
    }
 
-   String getHandVal()
+   String getHandValStr()
    {
-      return HandEvaluator.getHandVal(playerHand).toString();
+      HandEvaluator.handVal handV = HandEvaluator.getHandVal(playerHand);
+      return handV == HandEvaluator.handVal.LOSER ? "" : handV.toString();
    }
 
    private int evaluateHand()
@@ -102,7 +113,7 @@ class VPModel
 
    boolean incrementBet()
    {
-      if (inGame || getCredits() < MIN_BET || (usedIncrement && bet == MAX_BET))
+      if (inGame || getCredits() < MIN_BET || (usedIncrement && bet == MAX_BET ))
       {
          return false;
       }
@@ -121,14 +132,6 @@ class VPModel
       return incr;
    }
 
-   ArrayList<String> getStartHand()
-   {
-      String cardBack = "\\Cards\\background.gif";
-
-      return IntStream.range(0, Hand.MAX_CARDS).mapToObj(i ->
-            cardBack).collect(Collectors.toCollection(ArrayList::new));
-   }
-
    ArrayList<String> getHand()
    {
       return Stream.iterate(0, i -> i + 1).limit(Hand.MAX_CARDS)
@@ -142,11 +145,33 @@ class VPModel
 
       return !playerHand.setSwitchCard(i, !playerHand.getSwitchCard(i));
    }
+   
    int getCredits(){ return credits; }
-
    int getBet(){ return bet; }
    boolean getInGameStatus() { return inGame; }
    public int getCreditsWon() { return creditsWon; }
 
    static int getMaxCards() { return Hand.MAX_CARDS; }
+   
+   ArrayList<ArrayList<String>> getWinValList()
+   {
+      //consider using HashMap
+      ArrayList<ArrayList<String>> winTableList = new ArrayList<>();
+      for (HandEvaluator.handVal hVal : HandEvaluator.handVal.values())
+      {
+         if (hVal != HandEvaluator.handVal.LOSER)
+         {
+            ArrayList<String> winList = new ArrayList<>();
+            winTableList.add(winList);
+            winList.add(hVal.toString());
+
+            for (int n = 1; n <= NUM_BETS; n++)
+            {
+               winList.add(String.valueOf(hVal.winVal(n * MIN_BET)));
+            }
+         }
+      }
+      return winTableList;
+   }
 }
+
